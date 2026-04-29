@@ -1,0 +1,222 @@
+/* Veri Temizliği Rehberi — Custom Styles */
+
+:root {
+  --primary: #14B8A6;
+  --primary-dark: #0F766E;
+  --primary-light: #5EEAD4;
+  --accent: #06B6D4;
+  --navy: #0F172A;
+  --navy-light: #1E293B;
+}
+
+/* Genel iyileştirmeler */
+body {
+  font-size: 16px;
+  line-height: 1.7;
+}
+
+/* Başlıklar */
+h1, h2, h3, h4 {
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+h1 {
+  color: var(--navy);
+  border-bottom: 3px solid var(--primary);
+  padding-bottom: 0.5rem;
+}
+
+h2 {
+  color: var(--primary-dark);
+  margin-top: 2.5rem;
+}
+
+h3 {
+  color: var(--navy-light);
+}
+
+/* Linkler */
+a {
+  color: var(--primary-dark);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.2s;
+}
+
+a:hover {
+  border-bottom-color: var(--primary);
+  color: var(--primary);
+}
+
+/* Kod blokları */
+pre {
+  background-color: #f8fafc !important;
+  border-left: 4px solid var(--primary);
+  border-radius: 6px;
+  padding: 1rem !important;
+}
+
+code {
+  color: var(--primary-dark);
+  background-color: rgba(20, 184, 166, 0.08);
+  padding: 0.15em 0.4em;
+  border-radius: 3px;
+  font-size: 0.9em;
+}
+
+pre code {
+  background-color: transparent;
+  padding: 0;
+  color: inherit;
+}
+
+/* Callout kutuları (Quarto'nun built-in callout'ları için override) */
+.callout {
+  border-radius: 8px;
+  margin: 1.5rem 0;
+}
+
+.callout-note {
+  border-left-color: var(--primary) !important;
+}
+
+.callout-tip {
+  border-left-color: #10B981 !important;
+}
+
+.callout-warning {
+  border-left-color: #F59E0B !important;
+}
+
+.callout-important {
+  border-left-color: #EF4444 !important;
+}
+
+/* Tablolar */
+table {
+  border-collapse: collapse;
+  margin: 1.5rem 0;
+  font-size: 0.95em;
+}
+
+table thead {
+  background-color: var(--navy);
+  color: white;
+}
+
+table th {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  font-weight: 600;
+}
+
+table td {
+  padding: 0.6rem 1rem;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+table tbody tr:hover {
+  background-color: #f0fdfa;
+}
+
+/* Navbar */
+.navbar-brand {
+  font-weight: 700;
+}
+
+.navbar {
+  box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+}
+
+/* Sidebar */
+.sidebar-title {
+  font-weight: 700;
+  color: var(--navy) !important;
+}
+
+.sidebar nav[role=doc-toc] ul > li > a.active,
+.sidebar nav[role=doc-toc] ul > li > ul > li > a.active {
+  color: var(--primary) !important;
+  border-left: 3px solid var(--primary);
+  padding-left: calc(0.5rem - 3px);
+  font-weight: 600;
+}
+
+/* Hero başlık (ana sayfa için) */
+.hero-banner {
+  background: linear-gradient(135deg, var(--navy) 0%, var(--primary-dark) 100%);
+  color: white;
+  padding: 3rem 2rem;
+  border-radius: 12px;
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.hero-banner h1 {
+  color: white;
+  border: none;
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.hero-banner p {
+  font-size: 1.2rem;
+  opacity: 0.95;
+}
+
+/* Kart benzeri liste öğeleri */
+.kart-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1rem;
+  margin: 2rem 0;
+}
+
+.kart {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-left: 4px solid var(--primary);
+  border-radius: 8px;
+  padding: 1.5rem;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.kart:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(20, 184, 166, 0.15);
+}
+
+.kart h3 {
+  margin-top: 0;
+  color: var(--primary-dark);
+}
+
+/* Kontrol listesi stili */
+ul.checklist {
+  list-style: none;
+  padding-left: 0;
+}
+
+ul.checklist li {
+  padding: 0.4rem 0 0.4rem 2rem;
+  position: relative;
+}
+
+ul.checklist li::before {
+  content: "☐";
+  position: absolute;
+  left: 0;
+  font-size: 1.2em;
+  color: var(--primary);
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .hero-banner {
+    padding: 2rem 1rem;
+  }
+  .hero-banner h1 {
+    font-size: 1.8rem;
+  }
+}

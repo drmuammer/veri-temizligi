@@ -1,0 +1,1323 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="tr" xml:lang="tr"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.9.37">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>3. OpenRefine Rehberi – Veri Temizliği Rehberi</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../rehber/04-r-temizlik.html" rel="next">
+<link href="../rehber/02-sik-sorunlar.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-acf12a64177840b8d86f2d4f01b2e9fb.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-23bbe8b5e4efc1e257f6d59dce478b08.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-acf12a64177840b8d86f2d4f01b2e9fb.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-5feaabed66f5ac1224eebc6339d715e7.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-dark-e463fe4cac91f302a4b3b62c8a97ad20.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../site_libs/bootstrap/bootstrap-5feaabed66f5ac1224eebc6339d715e7.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "Sonuç yok",
+    "search-matching-documents-text": "eşleşen belgeler",
+    "search-copy-link-title": "Aramak için bağlantıyı kopyalayın",
+    "search-hide-matches-text": "Ek eşleşmeleri gizle",
+    "search-more-match-text": "bu belgede bir tane daha eşleşme",
+    "search-more-matches-text": "bu belgede daha fazla eşleşme",
+    "search-clear-button-title": "Temizle",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "İptal et",
+    "search-submit-button-title": "Gönder",
+    "search-label": "Ara"
+  }
+}</script>
+<style>html{ scroll-behavior: smooth; }</style>
+
+
+<link rel="stylesheet" href="../styles.css">
+</head>
+
+<body class="nav-sidebar docked nav-fixed quarto-light"><script id="quarto-html-before-body" type="application/javascript">
+    const toggleBodyColorMode = (bsSheetEl) => {
+      const mode = bsSheetEl.getAttribute("data-mode");
+      const bodyEl = window.document.querySelector("body");
+      if (mode === "dark") {
+        bodyEl.classList.add("quarto-dark");
+        bodyEl.classList.remove("quarto-light");
+      } else {
+        bodyEl.classList.add("quarto-light");
+        bodyEl.classList.remove("quarto-dark");
+      }
+    }
+    const toggleBodyColorPrimary = () => {
+      const bsSheetEl = window.document.querySelector("link#quarto-bootstrap:not([rel=disabled-stylesheet])");
+      if (bsSheetEl) {
+        toggleBodyColorMode(bsSheetEl);
+      }
+    }
+    const setColorSchemeToggle = (alternate) => {
+      const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+      for (let i=0; i < toggles.length; i++) {
+        const toggle = toggles[i];
+        if (toggle) {
+          if (alternate) {
+            toggle.classList.add("alternate");
+          } else {
+            toggle.classList.remove("alternate");
+          }
+        }
+      }
+    };
+    const toggleColorMode = (alternate) => {
+      // Switch the stylesheets
+      const primaryStylesheets = window.document.querySelectorAll('link.quarto-color-scheme:not(.quarto-color-alternate)');
+      const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+      manageTransitions('#quarto-margin-sidebar .nav-link', false);
+      if (alternate) {
+        // note: dark is layered on light, we don't disable primary!
+        enableStylesheet(alternateStylesheets);
+        for (const sheetNode of alternateStylesheets) {
+          if (sheetNode.id === "quarto-bootstrap") {
+            toggleBodyColorMode(sheetNode);
+          }
+        }
+      } else {
+        disableStylesheet(alternateStylesheets);
+        enableStylesheet(primaryStylesheets)
+        toggleBodyColorPrimary();
+      }
+      manageTransitions('#quarto-margin-sidebar .nav-link', true);
+      // Switch the toggles
+      setColorSchemeToggle(alternate)
+      // Hack to workaround the fact that safari doesn't
+      // properly recolor the scrollbar when toggling (#1455)
+      if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+        manageTransitions("body", false);
+        window.scrollTo(0, 1);
+        setTimeout(() => {
+          window.scrollTo(0, 0);
+          manageTransitions("body", true);
+        }, 40);
+      }
+    }
+    const disableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        stylesheet.rel = 'disabled-stylesheet';
+      }
+    }
+    const enableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        if(stylesheet.rel !== 'stylesheet') { // for Chrome, which will still FOUC without this check
+          stylesheet.rel = 'stylesheet';
+        }
+      }
+    }
+    const manageTransitions = (selector, allowTransitions) => {
+      const els = window.document.querySelectorAll(selector);
+      for (let i=0; i < els.length; i++) {
+        const el = els[i];
+        if (allowTransitions) {
+          el.classList.remove('notransition');
+        } else {
+          el.classList.add('notransition');
+        }
+      }
+    }
+    const isFileUrl = () => {
+      return window.location.protocol === 'file:';
+    }
+    const hasAlternateSentinel = () => {
+      let styleSentinel = getColorSchemeSentinel();
+      if (styleSentinel !== null) {
+        return styleSentinel === "alternate";
+      } else {
+        return false;
+      }
+    }
+    const setStyleSentinel = (alternate) => {
+      const value = alternate ? "alternate" : "default";
+      if (!isFileUrl()) {
+        window.localStorage.setItem("quarto-color-scheme", value);
+      } else {
+        localAlternateSentinel = value;
+      }
+    }
+    const getColorSchemeSentinel = () => {
+      if (!isFileUrl()) {
+        const storageValue = window.localStorage.getItem("quarto-color-scheme");
+        return storageValue != null ? storageValue : localAlternateSentinel;
+      } else {
+        return localAlternateSentinel;
+      }
+    }
+    const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+      const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+      const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+      let newTheme = '';
+      if(authorPrefersDark) {
+        newTheme = isAlternate ? baseTheme : alternateTheme;
+      } else {
+        newTheme = isAlternate ? alternateTheme : baseTheme;
+      }
+      const changeGiscusTheme = () => {
+        // From: https://github.com/giscus/giscus/issues/336
+        const sendMessage = (message) => {
+          const iframe = document.querySelector('iframe.giscus-frame');
+          if (!iframe) return;
+          iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+        }
+        sendMessage({
+          setConfig: {
+            theme: newTheme
+          }
+        });
+      }
+      const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+      if (isGiscussLoaded) {
+        changeGiscusTheme();
+      }
+    };
+    const authorPrefersDark = false;
+    const darkModeDefault = authorPrefersDark;
+      document.querySelector('link#quarto-text-highlighting-styles.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+      document.querySelector('link#quarto-bootstrap.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+    let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+    // Dark / light mode switch
+    window.quartoToggleColorScheme = () => {
+      // Read the current dark / light value
+      let toAlternate = !hasAlternateSentinel();
+      toggleColorMode(toAlternate);
+      setStyleSentinel(toAlternate);
+      toggleGiscusIfUsed(toAlternate, darkModeDefault);
+      window.dispatchEvent(new Event('resize'));
+    };
+    // Switch to dark mode if need be
+    if (hasAlternateSentinel()) {
+      toggleColorMode(true);
+    } else {
+      toggleColorMode(false);
+    }
+  </script>
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">🧹 Veri Temizliği</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Ara"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Gezinmeyi değiştir" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link active" href="../index.html" aria-current="page"> 
+<span class="menu-text">Ana Sayfa</span></a>
+  </li>  
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-rehber" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Rehber</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-rehber">    
+        <li>
+    <a class="dropdown-item" href="../rehber/01-veri-toplama-disiplini.html">
+ <span class="dropdown-text">1. Veri Toplama Disiplini</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../rehber/02-sik-sorunlar.html">
+ <span class="dropdown-text">2. Sık Karşılaşılan Sorunlar</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../rehber/03-openrefine-rehberi.html">
+ <span class="dropdown-text">3. OpenRefine Rehberi</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../rehber/04-r-temizlik.html">
+ <span class="dropdown-text">4. R ile Temizlik</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../rehber/05-kontrol-listesi.html">
+ <span class="dropdown-text">5. Kontrol Listesi</span></a>
+  </li>  
+    </ul>
+  </li>
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/drmuammer/veri-temizligi"> <i class="bi bi-github" role="img" aria-label="GitHub">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://muammerbeslen.com"> <i class="bi bi-house" role="img" aria-label="Website">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Karanlık modu değiştir"><i class="bi"></i></a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Kenar çubuğunu değiştir" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../rehber/01-veri-toplama-disiplini.html">📚 Rehber</a></li><li class="breadcrumb-item"><a href="../rehber/03-openrefine-rehberi.html">3. OpenRefine Rehberi</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Kenar çubuğunu değiştir" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Ara" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Ara"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">🏠 Ana Sayfa</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">📚 Rehber</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Bölümü değiştir">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../rehber/01-veri-toplama-disiplini.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">1. Veri Toplama Disiplini</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../rehber/02-sik-sorunlar.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">2. Sık Karşılaşılan Sorunlar</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../rehber/03-openrefine-rehberi.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">3. OpenRefine Rehberi</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../rehber/04-r-temizlik.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">4. R ile Temizlik</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../rehber/05-kontrol-listesi.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">5. Kontrol Listesi</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">İçindekiler</h2>
+   
+  <ul>
+  <li><a href="#openrefine-nedir" id="toc-openrefine-nedir" class="nav-link active" data-scroll-target="#openrefine-nedir">OpenRefine Nedir?</a></li>
+  <li><a href="#kurulum" id="toc-kurulum" class="nav-link" data-scroll-target="#kurulum">3.1 Kurulum</a>
+  <ul class="collapse">
+  <li><a href="#windows" id="toc-windows" class="nav-link" data-scroll-target="#windows">Windows</a></li>
+  <li><a href="#mac" id="toc-mac" class="nav-link" data-scroll-target="#mac">Mac</a></li>
+  </ul></li>
+  <li><a href="#yeni-proje-oluşturma" id="toc-yeni-proje-oluşturma" class="nav-link" data-scroll-target="#yeni-proje-oluşturma">3.2 Yeni Proje Oluşturma</a>
+  <ul class="collapse">
+  <li><a href="#adım-1-veri-yükleme" id="toc-adım-1-veri-yükleme" class="nav-link" data-scroll-target="#adım-1-veri-yükleme">Adım 1: Veri Yükleme</a></li>
+  <li><a href="#adım-2-önizleme" id="toc-adım-2-önizleme" class="nav-link" data-scroll-target="#adım-2-önizleme">Adım 2: Önizleme</a></li>
+  </ul></li>
+  <li><a href="#temel-arayüz" id="toc-temel-arayüz" class="nav-link" data-scroll-target="#temel-arayüz">3.3 Temel Arayüz</a></li>
+  <li><a href="#facet-sütundaki-tüm-değerleri-görme" id="toc-facet-sütundaki-tüm-değerleri-görme" class="nav-link" data-scroll-target="#facet-sütundaki-tüm-değerleri-görme">3.4 Facet — Sütundaki Tüm Değerleri Görme</a>
+  <ul class="collapse">
+  <li><a href="#adım-adım" id="toc-adım-adım" class="nav-link" data-scroll-target="#adım-adım">Adım Adım:</a></li>
+  </ul></li>
+  <li><a href="#cluster-kategori-temizliğinin-sihri" id="toc-cluster-kategori-temizliğinin-sihri" class="nav-link" data-scroll-target="#cluster-kategori-temizliğinin-sihri">3.5 Cluster — Kategori Temizliğinin Sihri</a>
+  <ul class="collapse">
+  <li><a href="#adım-adım-1" id="toc-adım-adım-1" class="nav-link" data-scroll-target="#adım-adım-1">Adım Adım:</a></li>
+  <li><a href="#cluster-algoritmaları" id="toc-cluster-algoritmaları" class="nav-link" data-scroll-target="#cluster-algoritmaları">Cluster Algoritmaları</a></li>
+  </ul></li>
+  <li><a href="#common-transforms-toplu-metin-işleme" id="toc-common-transforms-toplu-metin-işleme" class="nav-link" data-scroll-target="#common-transforms-toplu-metin-işleme">3.6 Common Transforms — Toplu Metin İşleme</a></li>
+  <li><a href="#tarih-formatı-düzeltme" id="toc-tarih-formatı-düzeltme" class="nav-link" data-scroll-target="#tarih-formatı-düzeltme">3.7 Tarih Formatı Düzeltme</a></li>
+  <li><a href="#eksik-değerleri-tutarlı-hâle-getirme" id="toc-eksik-değerleri-tutarlı-hâle-getirme" class="nav-link" data-scroll-target="#eksik-değerleri-tutarlı-hâle-getirme">3.8 Eksik Değerleri Tutarlı Hâle Getirme</a></li>
+  <li><a href="#duplikatları-bulma" id="toc-duplikatları-bulma" class="nav-link" data-scroll-target="#duplikatları-bulma">3.9 Duplikatları Bulma</a></li>
+  <li><a href="#sonucu-dışa-aktarma" id="toc-sonucu-dışa-aktarma" class="nav-link" data-scroll-target="#sonucu-dışa-aktarma">3.10 Sonucu Dışa Aktarma</a></li>
+  <li><a href="#işinizi-kaydetme" id="toc-işinizi-kaydetme" class="nav-link" data-scroll-target="#işinizi-kaydetme">3.11 İşinizi Kaydetme</a></li>
+  <li><a href="#mini-pratik" id="toc-mini-pratik" class="nav-link" data-scroll-target="#mini-pratik">✅ Mini Pratik</a></li>
+  <li><a href="#video-ve-ek-kaynaklar" id="toc-video-ve-ek-kaynaklar" class="nav-link" data-scroll-target="#video-ve-ek-kaynaklar">📺 Video ve Ek Kaynaklar</a></li>
+  <li><a href="#bu-bölümün-özeti" id="toc-bu-bölümün-özeti" class="nav-link" data-scroll-target="#bu-bölümün-özeti">✅ Bu Bölümün Özeti</a></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/drmuammer/veri-temizligi/edit/main/rehber/03-openrefine-rehberi.qmd" class="toc-action"><i class="bi bi-github"></i>Bu sayfayı düzenle</a></li><li><a href="https://github.com/drmuammer/veri-temizligi/issues/new" class="toc-action"><i class="bi empty"></i>Sorun bildir</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../rehber/01-veri-toplama-disiplini.html">📚 Rehber</a></li><li class="breadcrumb-item"><a href="../rehber/03-openrefine-rehberi.html">3. OpenRefine Rehberi</a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title">3. OpenRefine Rehberi</h1>
+<p class="subtitle lead">Kod yazmadan, ücretsiz, güçlü veri temizliği</p>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="openrefine-nedir" class="level2">
+<h2 class="anchored" data-anchor-id="openrefine-nedir">OpenRefine Nedir?</h2>
+<p><strong>OpenRefine</strong> (eski adıyla Google Refine), kategori temizliği, fuzzy matching ve toplu metin işleme için tasarlanmış <strong>ücretsiz ve açık kaynaklı</strong> bir araçtır.</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">İpucu</span>Neden OpenRefine?
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li><strong>Ücretsiz</strong> — kurumsal lisans gerekmez</li>
+<li><strong>Yerel</strong> — verileriniz bilgisayarınızdan çıkmaz, gizlilik güvende</li>
+<li><strong>Tarayıcıda çalışır</strong> — ama bilgisayarınıza kurulur, internet gerekmez</li>
+<li><strong>Kod yok</strong> — tıklayarak kullanılır</li>
+<li><strong>Türkçe karakter desteği</strong> — UTF-8 ile sorunsuz çalışır</li>
+</ul>
+</div>
+</div>
+<p>OpenRefine’ın en güçlü özelliği <strong>Cluster</strong> (kümeleme) — <code>Erkek</code>, <code>erkek</code>, <code>E</code>, <code>Erkk</code> gibi tutarsız kategori değerlerini tek tıkla bir araya getirip “hepsi aynı şey” diyebilmenize izin verir.</p>
+</section>
+<section id="kurulum" class="level2">
+<h2 class="anchored" data-anchor-id="kurulum">3.1 Kurulum</h2>
+<section id="windows" class="level3">
+<h3 class="anchored" data-anchor-id="windows">Windows</h3>
+<ol type="1">
+<li><strong><a href="https://openrefine.org/download.html" class="uri">https://openrefine.org/download.html</a></strong> adresine gidin</li>
+<li><strong>Windows kit (with embedded Java)</strong> seçeneğini indirin (~150 MB)</li>
+<li>ZIP dosyasını masaüstüne çıkarın</li>
+<li>Klasör içinde <strong><code>openrefine.exe</code></strong> dosyasını çift tıklayın</li>
+<li>Tarayıcınız otomatik açılır: <code>http://127.0.0.1:3333</code></li>
+</ol>
+</section>
+<section id="mac" class="level3">
+<h3 class="anchored" data-anchor-id="mac">Mac</h3>
+<ol type="1">
+<li>Aynı sayfadan <strong>Mac kit</strong> indirin</li>
+<li><code>.dmg</code> dosyasını açın, <code>OpenRefine</code> uygulamasını <strong>Applications</strong> klasörüne sürükleyin</li>
+<li>İlk açılışta “developer not verified” uyarısı çıkarsa: sağ tık → <strong>Aç</strong> → <strong>Aç</strong></li>
+<li>Tarayıcı otomatik açılır</li>
+</ol>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Uyarı</span>Java Gereksinimi
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>“Java not found” hatası alırsanız, <strong>Java 11 veya üstü</strong> kurulu olmalı. Windows için “with embedded Java” sürümü zaten Java içerir.</p>
+</div>
+</div>
+</section>
+</section>
+<section id="yeni-proje-oluşturma" class="level2">
+<h2 class="anchored" data-anchor-id="yeni-proje-oluşturma">3.2 Yeni Proje Oluşturma</h2>
+<p>OpenRefine açılınca karşınıza üç sekme çıkar:</p>
+<ul>
+<li><strong>Create Project</strong> — yeni proje oluştur</li>
+<li><strong>Open Project</strong> — daha önce açtığınız projeleri aç</li>
+<li><strong>Import Project</strong> — dışa aktarılmış proje yükle</li>
+</ul>
+<section id="adım-1-veri-yükleme" class="level3">
+<h3 class="anchored" data-anchor-id="adım-1-veri-yükleme">Adım 1: Veri Yükleme</h3>
+<p><strong>Create Project</strong> → <strong>This Computer</strong> → <strong>Choose Files</strong></p>
+<p>Excel (<code>.xlsx</code>), CSV, TSV, JSON dosyalarını destekler. Excel dosyanızı seçin → <strong>Next</strong>.</p>
+</section>
+<section id="adım-2-önizleme" class="level3">
+<h3 class="anchored" data-anchor-id="adım-2-önizleme">Adım 2: Önizleme</h3>
+<p>OpenRefine size verinin nasıl yüklenecek olduğunu önizler:</p>
+<ul>
+<li>✅ Doğru sayfa (worksheet) seçili mi?</li>
+<li>✅ İlk satır başlık olarak işaretli mi? (“Parse next 1 line(s) as column headers”)</li>
+<li>✅ Türkçe karakterler doğru görünüyor mu? (Encoding: UTF-8)</li>
+<li>❌ Boş satırlar atlanmış mı? (“Skip first N rows” gerekirse kullanın)</li>
+</ul>
+<p>Sağ üstte <strong>Project name</strong> girin (örn. <code>koah_veri_v1</code>) → <strong>Create Project</strong>.</p>
+</section>
+</section>
+<section id="temel-arayüz" class="level2">
+<h2 class="anchored" data-anchor-id="temel-arayüz">3.3 Temel Arayüz</h2>
+<p>Proje açıldığında şunları görürsünüz:</p>
+<ul>
+<li><strong>Üst menü:</strong> her sütunda küçük üçgen var → o sütun için işlemler</li>
+<li><strong>Sol panel:</strong> Facet/Filter (filtreleme alanı) ve Undo/Redo (geri al/ileri al)</li>
+<li><strong>Orta:</strong> veri tablosu</li>
+</ul>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">İpucu</span>Geri Al güvencesi
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>OpenRefine <strong>her işlemi kaydeder</strong>. Sol panelden <strong>Undo / Redo</strong> sekmesini açıp herhangi bir adıma geri dönebilirsiniz. Yanlış yapmaktan korkmayın!</p>
+</div>
+</div>
+</section>
+<section id="facet-sütundaki-tüm-değerleri-görme" class="level2">
+<h2 class="anchored" data-anchor-id="facet-sütundaki-tüm-değerleri-görme">3.4 Facet — Sütundaki Tüm Değerleri Görme</h2>
+<p><strong>Facet</strong>, bir sütundaki tüm benzersiz değerleri ve kaç kez geçtiklerini gösterir. Tutarsız kategorileri görmek için ilk başvurulacak araçtır.</p>
+<section id="adım-adım" class="level3">
+<h3 class="anchored" data-anchor-id="adım-adım">Adım Adım:</h3>
+<ol type="1">
+<li><code>cinsiyet</code> sütununun başlığındaki üçgene tıkla</li>
+<li><strong>Facet</strong> → <strong>Text facet</strong></li>
+<li>Sol panelde tüm değerler ve sayıları görünür:</li>
+</ol>
+<pre><code>Erkek    245
+erkek     32
+E         18
+ERKEK     12
+Erkk       2
+Kadın    198
+kadın     21
+K          7</code></pre>
+<p>Tek bakışta tüm tutarsızlıkları görüyorsunuz. Şimdi temizliğe geçelim.</p>
+</section>
+</section>
+<section id="cluster-kategori-temizliğinin-sihri" class="level2">
+<h2 class="anchored" data-anchor-id="cluster-kategori-temizliğinin-sihri">3.5 Cluster — Kategori Temizliğinin Sihri</h2>
+<p><strong>Cluster</strong> OpenRefine’ın yıldız özelliğidir. Benzer ama tam aynı olmayan değerleri otomatik gruplar.</p>
+<section id="adım-adım-1" class="level3">
+<h3 class="anchored" data-anchor-id="adım-adım-1">Adım Adım:</h3>
+<ol type="1">
+<li>Aktif facet panelinde sağ üstte <strong>Cluster</strong> butonu var → tıklayın</li>
+<li>Yeni pencerede gruplar görünür:</li>
+</ol>
+<pre><code>Cluster size: 5      Row count: 309
+- Erkek
+- erkek         } Bunların hepsi aynı sayılsın mı?
+- E                Yeni değer: [Erkek      ] ✅
+- ERKEK            
+- Erkk             
+
+Cluster size: 3      Row count: 226
+- Kadın
+- kadın         } Yeni değer: [Kadın      ] ✅
+- K</code></pre>
+<ol start="3" type="1">
+<li>Her grup için:
+<ul>
+<li>✅ <strong>Merge?</strong> kutusunu işaretle</li>
+<li><strong>New Cell Value</strong> alanına standart değeri yaz (örn. <code>Erkek</code>)</li>
+</ul></li>
+<li><strong>Merge Selected &amp; Re-Cluster</strong> butonuna bas</li>
+</ol>
+<p>Sistem otomatik olarak benzer grupları yeniden tarar; küçük yazım hatalarını da yakalar.</p>
+</section>
+<section id="cluster-algoritmaları" class="level3">
+<h3 class="anchored" data-anchor-id="cluster-algoritmaları">Cluster Algoritmaları</h3>
+<p>OpenRefine birkaç farklı algoritma sunar:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 29%">
+<col style="width: 44%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Method</th>
+<th>Ne yakalar</th>
+<th>Örnek</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Key collision: fingerprint</strong></td>
+<td>Sıralama/küçük-büyük harf farklı</td>
+<td><code>Erkek</code>, <code>erkek</code>, <code>ERKEK</code></td>
+</tr>
+<tr class="even">
+<td><strong>Key collision: ngram</strong></td>
+<td>İçerik benzer</td>
+<td><code>metformin 500</code>, <code>Metformin 500mg</code></td>
+</tr>
+<tr class="odd">
+<td><strong>Nearest neighbor: levenshtein</strong></td>
+<td>Yazım hatası</td>
+<td><code>Erkek</code>, <code>Erkk</code>, <code>Erekk</code></td>
+</tr>
+<tr class="even">
+<td><strong>Nearest neighbor: PPM</strong></td>
+<td>Komplike eşleşme</td>
+<td>Geniş varyasyonlar</td>
+</tr>
+</tbody>
+</table>
+<p>Genelde <strong>fingerprint</strong> ile başlayın, sonra <strong>ngram</strong>, en son <strong>levenshtein</strong> ile yazım hatalarını yakalayın.</p>
+</section>
+</section>
+<section id="common-transforms-toplu-metin-işleme" class="level2">
+<h2 class="anchored" data-anchor-id="common-transforms-toplu-metin-işleme">3.6 Common Transforms — Toplu Metin İşleme</h2>
+<p>Sütun başlığındaki üçgen → <strong>Edit cells</strong> → <strong>Common transforms</strong>:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 41%">
+<col style="width: 58%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>İşlem</th>
+<th>Ne yapar</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Trim leading and trailing whitespace</strong></td>
+<td>Baş/son boşlukları temizler</td>
+</tr>
+<tr class="even">
+<td><strong>Collapse consecutive whitespace</strong></td>
+<td>Birden fazla boşluğu tek boşluğa indirir</td>
+</tr>
+<tr class="odd">
+<td><strong>Unescape HTML entities</strong></td>
+<td><code>&amp;amp;</code> gibi HTML kodlarını çevirir</td>
+</tr>
+<tr class="even">
+<td><strong>To uppercase / lowercase / titlecase</strong></td>
+<td>Büyük/küçük/baş harf büyük yapar</td>
+</tr>
+<tr class="odd">
+<td><strong>To number</strong></td>
+<td>Metni sayıya çevirir</td>
+</tr>
+<tr class="even">
+<td><strong>To date</strong></td>
+<td>Metni tarihe çevirir</td>
+</tr>
+</tbody>
+</table>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">İpucu</span>İlk yapılacak iş
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Her metin sütununa şunları uygulayın:</p>
+<ol type="1">
+<li>Trim leading and trailing whitespace</li>
+<li>Collapse consecutive whitespace</li>
+</ol>
+<p>Bu iki işlem <strong>görünmez boşluk problemlerinin %90’ını</strong> çözer.</p>
+</div>
+</div>
+</section>
+<section id="tarih-formatı-düzeltme" class="level2">
+<h2 class="anchored" data-anchor-id="tarih-formatı-düzeltme">3.7 Tarih Formatı Düzeltme</h2>
+<p><code>dogum_tarihi</code> sütununda farklı formatlar varsa:</p>
+<ol type="1">
+<li>Sütun başlığı → <strong>Edit cells</strong> → <strong>Common transforms</strong> → <strong>To date</strong></li>
+</ol>
+<p>OpenRefine çoğu tarihi otomatik tanır. Tanımayanlar için:</p>
+<ol start="2" type="1">
+<li>Sütun başlığı → <strong>Edit cells</strong> → <strong>Transform…</strong></li>
+<li>Açılan kutuya GREL kodu yazın:</li>
+</ol>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode javascript code-with-copy"><code class="sourceCode javascript"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>value<span class="op">.</span><span class="fu">toDate</span>(<span class="st">"dd.MM.yyyy"</span>)</span></code></pre></div><button title="Panoya Kopyala" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Bu, <code>15.03.1965</code> formatını tarihe çevirir. Sonra:</p>
+<ol start="4" type="1">
+<li>Tüm sütunu standart bir formata yazdırmak için:</li>
+</ol>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode javascript code-with-copy"><code class="sourceCode javascript"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>value<span class="op">.</span><span class="fu">toString</span>(<span class="st">"yyyy-MM-dd"</span>)</span></code></pre></div><button title="Panoya Kopyala" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="eksik-değerleri-tutarlı-hâle-getirme" class="level2">
+<h2 class="anchored" data-anchor-id="eksik-değerleri-tutarlı-hâle-getirme">3.8 Eksik Değerleri Tutarlı Hâle Getirme</h2>
+<p><code>yok</code>, <code>-</code>, <code>?</code>, <code>NA</code> gibi metinleri boş hücreye çevirmek için:</p>
+<ol type="1">
+<li>Sütun → <strong>Facet</strong> → <strong>Text facet</strong></li>
+<li>Sol panelde temizlemek istediğiniz değere tıkla (örn. <code>yok</code>)</li>
+<li>Tablo o satırlarla filtrelenir</li>
+<li>Sütun → <strong>Edit cells</strong> → <strong>Transform…</strong></li>
+<li>Kodu yaz:</li>
+</ol>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode javascript code-with-copy"><code class="sourceCode javascript"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="st">""</span></span></code></pre></div><button title="Panoya Kopyala" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Bu seçili satırlardaki değeri boş yapar. <strong>Apply</strong> → boş hücreler oluşur.</p>
+<p>Aynısını her geçersiz değer için tekrarlayın (<code>-</code>, <code>?</code>, <code>NA</code> vb.).</p>
+</section>
+<section id="duplikatları-bulma" class="level2">
+<h2 class="anchored" data-anchor-id="duplikatları-bulma">3.9 Duplikatları Bulma</h2>
+<ol type="1">
+<li>Karşılaştırmak istediğiniz sütunu sırala: başlık → <strong>Sort</strong></li>
+<li>Yan sütunda <strong>Edit column</strong> → <strong>Add column based on this column…</strong></li>
+<li>Yeni sütun adı: <code>duplicate_check</code></li>
+<li>GREL ifadesi:</li>
+</ol>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode javascript code-with-copy"><code class="sourceCode javascript"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span>(row<span class="op">.</span><span class="at">index</span> <span class="op">&gt;</span> <span class="dv">0</span> <span class="op">&amp;&amp;</span> cells[<span class="st">"hasta_id"</span>]<span class="op">.</span><span class="at">value</span> <span class="op">==</span> cells[<span class="st">"hasta_id"</span>]<span class="op">.</span><span class="at">cells</span>[row<span class="op">.</span><span class="at">index</span> <span class="op">-</span> <span class="dv">1</span>]<span class="op">.</span><span class="at">value</span><span class="op">,</span> <span class="st">"DUPLICATE"</span><span class="op">,</span> <span class="st">""</span>)</span></code></pre></div><button title="Panoya Kopyala" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Bu, art arda gelen aynı <code>hasta_id</code>’leri işaretler. Sonra <code>duplicate_check</code> sütununa Facet uygulayıp DUPLICATE olanları görebilirsiniz.</p>
+</section>
+<section id="sonucu-dışa-aktarma" class="level2">
+<h2 class="anchored" data-anchor-id="sonucu-dışa-aktarma">3.10 Sonucu Dışa Aktarma</h2>
+<p>Temizlik bitince sağ üstte <strong>Export</strong> butonu:</p>
+<ul>
+<li><strong>Comma-separated value (CSV)</strong> — istatistik programları için en uyumlu format ⭐</li>
+<li><strong>Tab-separated value (TSV)</strong></li>
+<li><strong>Excel (XLS) / Excel 2007+ (XLSX)</strong></li>
+<li><strong>HTML table</strong></li>
+</ul>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">İpucu</span>Neden CSV?
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>CSV (virgülle ayrılmış değer) tüm istatistik programlarının (R, SPSS, Stata, SAS, Python) sorunsuz okuduğu <strong>evrensel formattır</strong>. Excel’in özelliklerine ihtiyacınız yoksa CSV tercih edin.</p>
+</div>
+</div>
+<p>Dışa aktarırken <strong>encoding olarak UTF-8</strong> seçtiğinizden emin olun (Türkçe karakterler için).</p>
+</section>
+<section id="işinizi-kaydetme" class="level2">
+<h2 class="anchored" data-anchor-id="işinizi-kaydetme">3.11 İşinizi Kaydetme</h2>
+<p>OpenRefine işlemleri otomatik kaydeder; programı kapatıp açtığınızda <strong>Open Project</strong> sekmesinden devam edebilirsiniz.</p>
+<p><strong>Bonus:</strong> İşlem geçmişini başka bir projeye uygulayabilirsiniz!</p>
+<ol type="1">
+<li><strong>Undo/Redo</strong> sekmesi → <strong>Extract…</strong></li>
+<li>JSON kodunu kopyalayın</li>
+<li>Başka projede aynı yere → <strong>Apply…</strong> → JSON yapıştır</li>
+<li>Tüm temizlik adımları otomatik uygulanır</li>
+</ol>
+<p>Bu, <strong>aynı tip veri için tekrarlayan temizlik şablonu</strong> oluşturmanın yoludur. Çok zaman kazandırır.</p>
+</section>
+<section id="mini-pratik" class="level2">
+<h2 class="anchored" data-anchor-id="mini-pratik">✅ Mini Pratik</h2>
+<p>OpenRefine’ı denemek için:</p>
+<ol type="1">
+<li>Excel dosyanızdan küçük bir örnek alın (örn. ilk 50 satır)</li>
+<li>Yeni proje oluşturun</li>
+<li>Şu sırayı uygulayın:
+<ul>
+<li>Tüm metin sütunlarına <strong>Trim whitespace</strong></li>
+<li>Kategorik sütunlara <strong>Cluster</strong> (en az fingerprint)</li>
+<li><code>cinsiyet</code>, <code>egitim</code> vb. sütunları standartlaştırın</li>
+<li>Tarih sütununu <strong>To date</strong> ile dönüştürün</li>
+</ul></li>
+<li>Sonucu CSV olarak dışa aktarın</li>
+<li>Sonucu Excel’de açıp gözden geçirin</li>
+</ol>
+<p>İlk denemenizde 30-60 dakika sürebilir. İkinci denemede 10 dakikaya iner. Üçüncüden sonra refleks olur.</p>
+</section>
+<section id="video-ve-ek-kaynaklar" class="level2">
+<h2 class="anchored" data-anchor-id="video-ve-ek-kaynaklar">📺 Video ve Ek Kaynaklar</h2>
+<ul>
+<li><strong>Resmi OpenRefine kullanıcı kılavuzu:</strong> <a href="https://openrefine.org/docs" class="uri">https://openrefine.org/docs</a></li>
+<li><strong>Library Carpentry OpenRefine dersi:</strong> <a href="https://librarycarpentry.org/lc-open-refine/" class="uri">https://librarycarpentry.org/lc-open-refine/</a> (İngilizce, ama görsel olarak çok anlaşılır)</li>
+<li><strong>YouTube’da “OpenRefine Türkçe”</strong> araması da bazı temel videolar bulur</li>
+</ul>
+</section>
+<section id="bu-bölümün-özeti" class="level2">
+<h2 class="anchored" data-anchor-id="bu-bölümün-özeti">✅ Bu Bölümün Özeti</h2>
+<p>OpenRefine’ı öğrenmek 1-2 saatlik bir yatırımdır ve sonrası boyunca size <strong>her veri için saatler</strong> kazandırır. Özellikle <strong>Cluster</strong> özelliği, başka hiçbir araçta bu kadar pratik değildir.</p>
+<p>Eğer biraz R denemek isterseniz: <a href="../rehber/04-r-temizlik.html">4. R ile Temizlik →</a></p>
+<p>Verinizin hazır olup olmadığını kontrol etmek isterseniz: <a href="../rehber/05-kontrol-listesi.html">5. Kontrol Listesi →</a></p>
+
+
+</section>
+
+<a onclick="window.scrollTo(0, 0); return false;" role="button" id="quarto-back-to-top"><i class="bi bi-arrow-up"></i> Başa dön</a></main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    // Ensure there is a toggle, if there isn't float one in the top right
+    if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+      const a = window.document.createElement('a');
+      a.classList.add('top-right');
+      a.classList.add('quarto-color-scheme-toggle');
+      a.href = "";
+      a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+      const i = window.document.createElement("i");
+      i.classList.add('bi');
+      a.appendChild(i);
+      window.document.body.appendChild(a);
+    }
+    setColorSchemeToggle(hasAlternateSentinel())
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Kopyalandı");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Kopyalandı");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/drmuammer\.github\.io\/veri-temizligi\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+            // target, if specified
+            link.setAttribute("target", "_blank");
+            if (link.getAttribute("rel") === null) {
+              link.setAttribute("rel", "noopener");
+            }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../rehber/02-sik-sorunlar.html" class="pagination-link" aria-label="2. Sık Karşılaşılan Sorunlar">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">2. Sık Karşılaşılan Sorunlar</span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../rehber/04-r-temizlik.html" class="pagination-link" aria-label="4. R ile Temizlik">
+        <span class="nav-page-text">4. R ile Temizlik</span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+<p>© 2026 Muammer Beslen, MD · <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a></p>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    <div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/drmuammer/veri-temizligi/edit/main/rehber/03-openrefine-rehberi.qmd" class="toc-action"><i class="bi bi-github"></i>Bu sayfayı düzenle</a></li><li><a href="https://github.com/drmuammer/veri-temizligi/issues/new" class="toc-action"><i class="bi empty"></i>Sorun bildir</a></li></ul></div></div>
+    <div class="nav-footer-right">
+      <ul class="footer-items list-unstyled">
+    <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/drmuammer/veri-temizligi">
+      <i class="bi bi-github" role="img">
+</i> 
+    </a>
+  </li>  
+    <li class="nav-item">
+    <a class="nav-link" href="https://muammerbeslen.com">
+<p>muammerbeslen.com</p>
+</a>
+  </li>  
+</ul>
+    </div>
+  </div>
+</footer>
+
+
+
+
+<script src="../site_libs/quarto-html/zenscroll-min.js"></script>
+</body></html>

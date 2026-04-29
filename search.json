@@ -1,0 +1,812 @@
+[
+  {
+    "objectID": "rehber/04-r-temizlik.html",
+    "href": "rehber/04-r-temizlik.html",
+    "title": "4. R ile Temizlik",
+    "section": "",
+    "text": "Bu bölüm, R’a hiç dokunmamış ya da çok az dokunmuş araştırmacılar içindir. Hedef kod yazmayı öğretmek değil, hazır kod bloklarını çalıştırarak veri kalite raporu üretmektir.\n\n\n\n\n\n\nİpucuR’ın avantajı\n\n\n\nOpenRefine veri görsel temizliği için harika; ama R otomatik kontrol ve tekrarlanabilir temizlik için daha iyidir. Aynı analizi her hafta yapacaksanız (örn. tez verisi güncellendikçe), R bir kez yazılır defalarca çalıştırılır.",
+    "crumbs": [
+      "Ana Sayfa",
+      "📚 Rehber",
+      "4. R ile Temizlik"
+    ]
+  },
+  {
+    "objectID": "rehber/04-r-temizlik.html#bu-bölüm-kimin-için",
+    "href": "rehber/04-r-temizlik.html#bu-bölüm-kimin-için",
+    "title": "4. R ile Temizlik",
+    "section": "",
+    "text": "Bu bölüm, R’a hiç dokunmamış ya da çok az dokunmuş araştırmacılar içindir. Hedef kod yazmayı öğretmek değil, hazır kod bloklarını çalıştırarak veri kalite raporu üretmektir.\n\n\n\n\n\n\nİpucuR’ın avantajı\n\n\n\nOpenRefine veri görsel temizliği için harika; ama R otomatik kontrol ve tekrarlanabilir temizlik için daha iyidir. Aynı analizi her hafta yapacaksanız (örn. tez verisi güncellendikçe), R bir kez yazılır defalarca çalıştırılır.",
+    "crumbs": [
+      "Ana Sayfa",
+      "📚 Rehber",
+      "4. R ile Temizlik"
+    ]
+  },
+  {
+    "objectID": "rehber/04-r-temizlik.html#r-ve-rstudio-kurulumu",
+    "href": "rehber/04-r-temizlik.html#r-ve-rstudio-kurulumu",
+    "title": "4. R ile Temizlik",
+    "section": "4.1 R ve RStudio Kurulumu",
+    "text": "4.1 R ve RStudio Kurulumu\n\nAdım 1: R Kurulumu\n\nhttps://cran.r-project.org/ adresine git\nİşletim sisteminize uygun sürümü indir (Windows için “Download R for Windows”)\n.exe dosyasını çalıştır, varsayılan ayarlarla kur\n\n\n\nAdım 2: RStudio Kurulumu\nR’ın kullanıcı dostu arayüzü:\n\nhttps://posit.co/download/rstudio-desktop/ adresine git\nDownload RStudio Desktop (ücretsiz sürüm)\nKur ve aç\n\n\n\nAdım 3: Paketleri Kur\nRStudio’da Console (sol alt) kısmına aşağıyı kopyalayıp yapıştırın, Enter:\ninstall.packages(c(\"readxl\", \"writexl\", \"janitor\", \"dplyr\", \"skimr\", \n                   \"naniar\", \"lubridate\", \"stringr\", \"ggplot2\"))\nBirkaç dakika sürer. Bittiğinde “package successfully unpacked…” mesajları görürsünüz.\n\n\n\n\n\n\nUyarıBir kez yapılır\n\n\n\nPaket kurulumu bir kez yapılır. Sonra her R oturumunda paketleri sadece yüklersiniz (library() ile).",
+    "crumbs": [
+      "Ana Sayfa",
+      "📚 Rehber",
+      "4. R ile Temizlik"
+    ]
+  },
+  {
+    "objectID": "rehber/04-r-temizlik.html#ilk-adımlar-veriyi-yüklemek",
+    "href": "rehber/04-r-temizlik.html#ilk-adımlar-veriyi-yüklemek",
+    "title": "4. R ile Temizlik",
+    "section": "4.2 İlk Adımlar — Veriyi Yüklemek",
+    "text": "4.2 İlk Adımlar — Veriyi Yüklemek\nRStudio’da File → New File → R Script ile yeni dosya açın. Aşağıdaki kodu yapıştırın ve dosyanın yolunu kendi dosyanıza göre değiştirin:\n# Paketleri yükle\nlibrary(readxl)\nlibrary(janitor)\nlibrary(dplyr)\nlibrary(skimr)\nlibrary(naniar)\n\n# Excel dosyasını oku\nveri &lt;- read_excel(\"C:/Users/Kullanici/Desktop/koah_veri.xlsx\")\n\n# İlk 6 satıra bak\nhead(veri)\n\n# Boyutu öğren (kaç satır, kaç sütun)\ndim(veri)\n\n\n\n\n\n\nİpucuDosya yolu püf noktası\n\n\n\nWindows’ta dosya yolu yapıştırırken \\ yerine / kullanın ya da \\\\ yazın:\n\n❌ \"C:\\Users\\Adim\\veri.xlsx\"\n\n✅ \"C:/Users/Adim/veri.xlsx\"\n✅ \"C:\\\\Users\\\\Adim\\\\veri.xlsx\"\n\n\n\nÇalıştırmak için: kodun olduğu satıra tıklayın, Ctrl+Enter (Mac: Cmd+Enter).",
+    "crumbs": [
+      "Ana Sayfa",
+      "📚 Rehber",
+      "4. R ile Temizlik"
+    ]
+  },
+  {
+    "objectID": "rehber/04-r-temizlik.html#sütun-adlarını-temizle-clean_names",
+    "href": "rehber/04-r-temizlik.html#sütun-adlarını-temizle-clean_names",
+    "title": "4. R ile Temizlik",
+    "section": "4.3 Sütun Adlarını Temizle — clean_names()",
+    "text": "4.3 Sütun Adlarını Temizle — clean_names()\njanitor paketinin en kullanışlı fonksiyonu:\nveri &lt;- clean_names(veri)\nBu fonksiyon:\n\nTürkçe karakterleri ASCII’ye çevirir (ö → o, ç → c)\nBoşlukları _ yapar\nHepsini küçük harfe çevirir\nÖzel karakterleri kaldırır\n\n\nÖnce / Sonra\nÖnce: \"Doğum Tarihi\", \"Yaş (yıl)\", \"Tansiyon-Sistolik\", \"BMI(kg/m²)\"\nSonra: \"dogum_tarihi\", \"yas_yil\", \"tansiyon_sistolik\", \"bmi_kg_m2\"\nİki saatlik manuel işi tek satırla halleder.",
+    "crumbs": [
+      "Ana Sayfa",
+      "📚 Rehber",
+      "4. R ile Temizlik"
+    ]
+  },
+  {
+    "objectID": "rehber/04-r-temizlik.html#boş-satırsütun-temizliği",
+    "href": "rehber/04-r-temizlik.html#boş-satırsütun-temizliği",
+    "title": "4. R ile Temizlik",
+    "section": "4.4 Boş Satır/Sütun Temizliği",
+    "text": "4.4 Boş Satır/Sütun Temizliği\n# Tamamen boş satırları/sütunları kaldır\nveri &lt;- veri %&gt;% \n  remove_empty(c(\"rows\", \"cols\"))\n%&gt;% işareti “ardı ardına yap” anlamına gelir (pipe operatörü).",
+    "crumbs": [
+      "Ana Sayfa",
+      "📚 Rehber",
+      "4. R ile Temizlik"
+    ]
+  },
+  {
+    "objectID": "rehber/04-r-temizlik.html#hızlı-genel-bakış-skim",
+    "href": "rehber/04-r-temizlik.html#hızlı-genel-bakış-skim",
+    "title": "4. R ile Temizlik",
+    "section": "4.5 Hızlı Genel Bakış — skim()",
+    "text": "4.5 Hızlı Genel Bakış — skim()\nskimr paketinin gözde fonksiyonu:\nskim(veri)\nÇıktısı şunu gösterir:\n\nHer sütunun veri tipi\nEksik değer sayısı ve oranı\nSayısal sütunlar için ortalama, sd, min, max, çeyrekler\nMetin sütunları için benzersiz değer sayısı\nMini histogram (terminalde!)\n\nBir bakışta verinin sağlık durumunu görürsünüz.",
+    "crumbs": [
+      "Ana Sayfa",
+      "📚 Rehber",
+      "4. R ile Temizlik"
+    ]
+  },
+  {
+    "objectID": "rehber/04-r-temizlik.html#duplikat-kontrolü-get_dupes",
+    "href": "rehber/04-r-temizlik.html#duplikat-kontrolü-get_dupes",
+    "title": "4. R ile Temizlik",
+    "section": "4.6 Duplikat Kontrolü — get_dupes()",
+    "text": "4.6 Duplikat Kontrolü — get_dupes()\n# hasta_id sütununda duplikat var mı?\nget_dupes(veri, hasta_id)\n\n# Birden fazla sütuna göre duplikat (kısmi duplikat)\nget_dupes(veri, ad, soyad, dogum_tarihi)\nEğer hiç çıktı yoksa: hiç duplikat yok ✅. Eğer satırlar listelenirse: o satırlar duplikattır.",
+    "crumbs": [
+      "Ana Sayfa",
+      "📚 Rehber",
+      "4. R ile Temizlik"
+    ]
+  },
+  {
+    "objectID": "rehber/04-r-temizlik.html#tabulasyon-kategorik-sütunları-görme",
+    "href": "rehber/04-r-temizlik.html#tabulasyon-kategorik-sütunları-görme",
+    "title": "4. R ile Temizlik",
+    "section": "4.7 Tabulasyon — Kategorik Sütunları Görme",
+    "text": "4.7 Tabulasyon — Kategorik Sütunları Görme\n# Tek sütun\nveri %&gt;% tabyl(cinsiyet)\n\n# Çapraz tablo (iki sütun)\nveri %&gt;% tabyl(cinsiyet, sigara_kullanimi)\nÇıktı:\n cinsiyet   n  percent\n    Erkek 245    0.527\n    erkek  32    0.069\n        E  18    0.039\n    ERKEK  12    0.026\n    Kadın 198    0.426\nTutarsızlıkları hemen görürsünüz.",
+    "crumbs": [
+      "Ana Sayfa",
+      "📚 Rehber",
+      "4. R ile Temizlik"
+    ]
+  },
+  {
+    "objectID": "rehber/04-r-temizlik.html#eksik-değer-görselleştirme-naniar",
+    "href": "rehber/04-r-temizlik.html#eksik-değer-görselleştirme-naniar",
+    "title": "4. R ile Temizlik",
+    "section": "4.8 Eksik Değer Görselleştirme — naniar",
+    "text": "4.8 Eksik Değer Görselleştirme — naniar\nlibrary(naniar)\n\n# Eksik değerlerin tablosu\nmiss_var_summary(veri)\n\n# Eksik değerlerin haritası (hangi satırda hangi sütun eksik)\nvis_miss(veri)\nvis_miss() size siyah-beyaz bir harita çizer; verinin neresinde eksiklik olduğunu görsel olarak gösterir. Eksiklikler rastgele mi yoksa örüntülü mü anlamak için altın değerinde.",
+    "crumbs": [
+      "Ana Sayfa",
+      "📚 Rehber",
+      "4. R ile Temizlik"
+    ]
+  },
+  {
+    "objectID": "rehber/04-r-temizlik.html#mini-temizlik-şablonu",
+    "href": "rehber/04-r-temizlik.html#mini-temizlik-şablonu",
+    "title": "4. R ile Temizlik",
+    "section": "4.9 Mini Temizlik Şablonu",
+    "text": "4.9 Mini Temizlik Şablonu\nAşağıdaki kod bloğu, tipik bir Excel verisinde en yaygın 10 sorunu otomatik kontrol eder ve raporlar. Kopyalayın, dosya yolunu değiştirin, çalıştırın:\n# ----- Paketler -----\nlibrary(readxl)\nlibrary(writexl)\nlibrary(janitor)\nlibrary(dplyr)\nlibrary(skimr)\nlibrary(naniar)\n\n# ----- 1. Veriyi oku -----\ndosya_yolu &lt;- \"C:/Users/Kullanici/Desktop/veri.xlsx\"\nveri &lt;- read_excel(dosya_yolu)\n\ncat(\"\\n📊 BOYUT:\\n\")\ncat(sprintf(\"Satır: %d, Sütun: %d\\n\\n\", nrow(veri), ncol(veri)))\n\n# ----- 2. Sütun adlarını temizle -----\nveri &lt;- clean_names(veri)\ncat(\"✅ Sütun adları temizlendi\\n\")\ncat(\"Yeni sütun adları:\\n\")\nprint(names(veri))\n\n# ----- 3. Boş satır/sütun -----\nveri &lt;- remove_empty(veri, c(\"rows\", \"cols\"))\ncat(sprintf(\"\\n✅ Boş satır/sütun temizlendi. Yeni boyut: %d x %d\\n\", \n            nrow(veri), ncol(veri)))\n\n# ----- 4. Genel istatistik özet -----\ncat(\"\\n📋 GENEL ÖZET:\\n\")\nprint(skim(veri))\n\n# ----- 5. Duplikat kontrolü -----\ncat(\"\\n🔍 DUPLİKAT KONTROL:\\n\")\nduplikat_kontrol &lt;- get_dupes(veri)\nif (nrow(duplikat_kontrol) == 0) {\n  cat(\"✅ Tam duplikat yok\\n\")\n} else {\n  cat(sprintf(\"⚠️  %d duplikat satır bulundu\\n\", nrow(duplikat_kontrol)))\n  print(duplikat_kontrol)\n}\n\n# ----- 6. Eksik değer haritası -----\ncat(\"\\n📉 EKSİK DEĞER ÖZETİ:\\n\")\nprint(miss_var_summary(veri))\n\n# ----- 7. Kategorik sütunlarda tutarsızlık -----\ncat(\"\\n🏷️  KATEGORİK SÜTUNLARDA BENZERSIZ DEĞERLER:\\n\")\nveri %&gt;% \n  select(where(is.character)) %&gt;% \n  summarise(across(everything(), ~length(unique(.)))) %&gt;% \n  print()\n\n# ----- 8. Temiz veriyi kaydet -----\ncikti_yolu &lt;- gsub(\"\\\\.xlsx$\", \"_TEMIZ.xlsx\", dosya_yolu)\nwrite_xlsx(veri, cikti_yolu)\ncat(sprintf(\"\\n✅ Temizlenmiş veri kaydedildi: %s\\n\", cikti_yolu))\nBu kodu çalıştırdığınızda:\n\nKonsola tüm sorunların raporu yazılır\nTemizlenmiş Excel &lt;dosya_adi&gt;_TEMIZ.xlsx olarak kaydedilir",
+    "crumbs": [
+      "Ana Sayfa",
+      "📚 Rehber",
+      "4. R ile Temizlik"
+    ]
+  },
+  {
+    "objectID": "rehber/04-r-temizlik.html#tarih-düzeltme",
+    "href": "rehber/04-r-temizlik.html#tarih-düzeltme",
+    "title": "4. R ile Temizlik",
+    "section": "4.10 Tarih Düzeltme",
+    "text": "4.10 Tarih Düzeltme\nExcel’in tarih kabusunu R çözer:\nlibrary(lubridate)\n\n# Farklı format tarihleri tek formata çevir\nveri$dogum_tarihi &lt;- ymd(veri$dogum_tarihi)        # \"2024-03-15\" formatı\nveri$dogum_tarihi &lt;- dmy(veri$dogum_tarihi)        # \"15.03.2024\" formatı  \nveri$dogum_tarihi &lt;- mdy(veri$dogum_tarihi)        # \"03/15/2024\" formatı\n\n# Yaşı doğum tarihinden hesapla\nveri &lt;- veri %&gt;% \n  mutate(yas = as.numeric(difftime(Sys.Date(), dogum_tarihi, units = \"days\") / 365.25))",
+    "crumbs": [
+      "Ana Sayfa",
+      "📚 Rehber",
+      "4. R ile Temizlik"
+    ]
+  },
+  {
+    "objectID": "rehber/04-r-temizlik.html#kategorileri-düzenleme",
+    "href": "rehber/04-r-temizlik.html#kategorileri-düzenleme",
+    "title": "4. R ile Temizlik",
+    "section": "4.11 Kategorileri Düzenleme",
+    "text": "4.11 Kategorileri Düzenleme\nlibrary(stringr)\nlibrary(dplyr)\n\nveri &lt;- veri %&gt;% \n  mutate(\n    # Boşlukları temizle\n    cinsiyet = str_trim(cinsiyet),\n    # Kategorileri standartlaştır\n    cinsiyet = case_when(\n      cinsiyet %in% c(\"Erkek\", \"erkek\", \"ERKEK\", \"E\", \"e\", \"Erkk\") ~ \"Erkek\",\n      cinsiyet %in% c(\"Kadın\", \"kadın\", \"KADIN\", \"K\", \"k\") ~ \"Kadın\",\n      TRUE ~ NA_character_\n    )\n  )\n\n# Kontrol\nveri %&gt;% tabyl(cinsiyet)",
+    "crumbs": [
+      "Ana Sayfa",
+      "📚 Rehber",
+      "4. R ile Temizlik"
+    ]
+  },
+  {
+    "objectID": "rehber/04-r-temizlik.html#eksik-değer-kodlarını-düzeltme",
+    "href": "rehber/04-r-temizlik.html#eksik-değer-kodlarını-düzeltme",
+    "title": "4. R ile Temizlik",
+    "section": "4.12 Eksik Değer Kodlarını Düzeltme",
+    "text": "4.12 Eksik Değer Kodlarını Düzeltme\nlibrary(naniar)\n\n# \"yok\", \"-\", \"?\" gibi metinleri NA yap\nveri &lt;- veri %&gt;% \n  replace_with_na_all(condition = ~.x %in% c(\"yok\", \"-\", \"?\", \"NA\", \"veri yok\", \"\"))",
+    "crumbs": [
+      "Ana Sayfa",
+      "📚 Rehber",
+      "4. R ile Temizlik"
+    ]
+  },
+  {
+    "objectID": "rehber/04-r-temizlik.html#ilerideki-adım-tam-şablon",
+    "href": "rehber/04-r-temizlik.html#ilerideki-adım-tam-şablon",
+    "title": "4. R ile Temizlik",
+    "section": "4.13 İlerideki Adım — Tam Şablon",
+    "text": "4.13 İlerideki Adım — Tam Şablon\nBu bölümdeki kodlar dağınık örnekler. Tam, render edilebilir bir Quarto şablonu ileride bu projenin bir parçası olacak. Hazır olduğunda buradan link verilecek.\n\n\n\n\n\n\nNotŞablonu nereden bulurum?\n\n\n\nİlerleyen sürümde sablon/ klasörü altında tek dosyalık temizlik-sablonu.qmd paylaşılacak. RStudio’da açıp Render butonuna basınca:\n\nKodun tamamı çalışır\nBir HTML rapor üretilir (eksikler, duplikatlar, tutarsızlıklar dahil)\nTemiz CSV/Excel çıktısı yan klasöre kaydedilir",
+    "crumbs": [
+      "Ana Sayfa",
+      "📚 Rehber",
+      "4. R ile Temizlik"
+    ]
+  },
+  {
+    "objectID": "rehber/04-r-temizlik.html#bu-bölümün-özeti",
+    "href": "rehber/04-r-temizlik.html#bu-bölümün-özeti",
+    "title": "4. R ile Temizlik",
+    "section": "✅ Bu Bölümün Özeti",
+    "text": "✅ Bu Bölümün Özeti\nR ile temizlik, OpenRefine’a göre daha programatik ama daha güçlüdür. İlk yatırım yüksek (kurulum, öğrenme), ama:\n\nTekrarlanabilir: Aynı temizlik 10 farklı dosyaya saniyede uygulanır\nBelgelenmiş: Kod, ne yaptığınızın kanıtıdır\nOtomatik rapor: Veriniz hakkında her şeyi tek bakışta görürsünüz\nAnalize doğal geçiş: Aynı R betiğinde temizlik + analiz yapılabilir",
+    "crumbs": [
+      "Ana Sayfa",
+      "📚 Rehber",
+      "4. R ile Temizlik"
+    ]
+  },
+  {
+    "objectID": "rehber/04-r-temizlik.html#sıradaki-bölüm",
+    "href": "rehber/04-r-temizlik.html#sıradaki-bölüm",
+    "title": "4. R ile Temizlik",
+    "section": "✅ Sıradaki Bölüm",
+    "text": "✅ Sıradaki Bölüm\n5. Kontrol Listesi → — Tüm bunlardan sonra verinizin hazır olup olmadığını test edin.",
+    "crumbs": [
+      "Ana Sayfa",
+      "📚 Rehber",
+      "4. R ile Temizlik"
+    ]
+  },
+  {
+    "objectID": "rehber/05-kontrol-listesi.html",
+    "href": "rehber/05-kontrol-listesi.html",
+    "title": "5. Kontrol Listesi",
+    "section": "",
+    "text": "Bu rehberin en pratik parçası burası. Verinizi bana ya da başka bir biyoistatistikçiye göndermeden önce, bu listenin tamamını geçmesi gerekir. Aksi halde geri dönecektir.\nBu sayfayı yazdırın ya da ayrı pencerede açın, dosyanızı yanına koyun, tek tek kontrol edin.",
+    "crumbs": [
+      "Ana Sayfa",
+      "📚 Rehber",
+      "5. Kontrol Listesi"
+    ]
+  },
+  {
+    "objectID": "rehber/05-kontrol-listesi.html#bu-liste-neden-önemli",
+    "href": "rehber/05-kontrol-listesi.html#bu-liste-neden-önemli",
+    "title": "5. Kontrol Listesi",
+    "section": "",
+    "text": "Bu rehberin en pratik parçası burası. Verinizi bana ya da başka bir biyoistatistikçiye göndermeden önce, bu listenin tamamını geçmesi gerekir. Aksi halde geri dönecektir.\nBu sayfayı yazdırın ya da ayrı pencerede açın, dosyanızı yanına koyun, tek tek kontrol edin.",
+    "crumbs": [
+      "Ana Sayfa",
+      "📚 Rehber",
+      "5. Kontrol Listesi"
+    ]
+  },
+  {
+    "objectID": "rehber/05-kontrol-listesi.html#kontrol-listesi",
+    "href": "rehber/05-kontrol-listesi.html#kontrol-listesi",
+    "title": "5. Kontrol Listesi",
+    "section": "✅ Kontrol Listesi",
+    "text": "✅ Kontrol Listesi\n\n📐 Bölüm A: Dosya Yapısı\n\n\n\n\n\n\nNotA.1 — Tek Çalışma Sayfası mı?\n\n\n\nDosyanızda yalnızca 1 sayfa veri olmalı. Birden fazla sayfa varsa: hangisi gerçek veri, hangisi codebook, hangisi notlar — net olmalı. Hiçbiri gereksiz olmamalı.\n\nVeri sayfası tek ve net\nCodebook ayrı sayfada (varsa)\nGereksiz “Sayfa1”, “Notlarım” türü sekmeler silinmiş\n\n\n\n\n\n\n\n\n\nNotA.2 — Veri A1 Hücresinden mi Başlıyor?\n\n\n\nVeri tablosu A1 hücresinden başlamalı. Üstte başlık metni, açıklama, logo olmamalı.\n\nA1 hücresi: ilk sütun başlığı\nB1 hücresi: ikinci sütun başlığı\n2. satırdan itibaren: gerçek veri\n\n\n\n\n\n\n\n\n\nNotA.3 — Birleştirilmiş Hücre Yok\n\n\n\nHiçbir yerde birleştirilmiş hücre olmamalı. Başlıkta da, veride de.\nKontrol: Tüm tabloyu seç → sağ tık → Hücreleri Biçimlendir → Hizalama → “Hücreleri birleştir” kutusu boş olmalı.\n\nSütun başlıklarında birleşim yok\nVeri içinde birleşim yok\n\n\n\n\n\n\n\n\n\nNotA.4 — Boş Satır/Sütun Yok (Veri İçinde)\n\n\n\nTablonun ortasında boş satır olmamalı. Boş satır verinin bittiği anlamına gelir, programlar oradan sonrasını okumayabilir.\n\nVeri içinde tamamen boş satır yok\nVeri içinde tamamen boş sütun yok\n\n\n\n\n\n\n\n\n\nNotA.5 — Toplam/Özet Satırı Yok\n\n\n\nTablonun en altında “TOPLAM”, “ORTALAMA”, “Genel” gibi özet satırları olmamalı.\n\nToplam satırı silinmiş\nOrtalama satırı silinmiş\nSayfanın altında not/yorum yok\n\n\n\n\n\n🏷️ Bölüm B: Sütun Adları\n\n\n\n\n\n\nNotB.1 — Tek Satır Başlık\n\n\n\nSütun başlıkları tek satırda (1. satır). İki satıra yayılmış başlık yok.\n\n1. satırda tüm başlıklar var\n2. satırdan veri başlıyor\n\n\n\n\n\n\n\n\n\nNotB.2 — Başlıklarda Sorun Yok\n\n\n\nHer başlık için kontrol:\n\nTürkçe karakter yok (ğ, ü, ş, ı, ö, ç değil)\nBoşluk yerine _ (alt çizgi) kullanılmış\nHepsi küçük harf\nÖzel karakter yok (?, !, %, *, /, vb.)\nRakamla başlamıyor (yas_yil evet, 1_olcum hayır)\nAnlamlı (kısaltma yapılacaksa codebook’ta açıklanmış)\n\n✅ İyi örnekler: hasta_id, yas_yil, bmi, tansiyon_sistolik, dogum_tarihi ❌ Kötü örnekler: Yaş(yıl), Tansiyon-Sistolik, 1.Ölçüm, Cinsiyet (E/K)\n\n\n\n\n\n\n\n\nNotB.3 — Sütun Adları Benzersiz\n\n\n\nAynı isimde iki sütun yok.\n\nTüm sütun adları farklı\n\n\n\n\n\n📅 Bölüm C: Tarih Sütunları\n\n\n\n\n\n\nNotC.1 — Tek Format\n\n\n\nTüm tarih sütunlarında tek format: YYYY-AA-GG (örn. 2024-03-15).\nKontrol: Tarih sütununu üstten alta gözle tarayın. Tutarsız format varsa düzeltin.\n\ndogum_tarihi sütunu tek format\nyatis_tarihi sütunu tek format\ncikis_tarihi sütunu tek format\n(diğer tarih sütunları) tek format\n\n\n\n\n\n\n\n\n\nNotC.2 — Tarih Sütunu Hücre Biçimi “Tarih”\n\n\n\nExcel’de tarih sütununu seçin → sağ tık → Hücreleri Biçimlendir → kategori “Tarih” olmalı, “Metin” değil.\n\nHücre biçimi “Tarih” olarak ayarlı\n\n\n\n\n\n🔢 Bölüm D: Sayısal Sütunlar\n\n\n\n\n\n\nNotD.1 — Sayı Yalnızca Sayı\n\n\n\nSayısal olması gereken sütunlarda metin olmamalı.\n❌ Kötü:\n170, 1.75 m, 170 cm, yaklaşık 170, &gt;200, &lt;50\n✅ İyi:\n170, 175, 170, 170, (boş), (boş)\n\nyas sütunu yalnızca sayı\nboy_cm sütunu yalnızca sayı (cm yazmadan)\nagirlik_kg sütunu yalnızca sayı\n(diğer sayısal sütunlar) yalnızca sayı\n\n\n\n\n\n\n\n\n\nNotD.2 — Birim Tutarlılığı\n\n\n\nBir sütundaki tüm değerler aynı birimde.\n\nBoy hep cm olarak (m karışmıyor)\nAğırlık hep kg olarak\nSüreler hep aynı birimde (gün/ay/yıl karışmıyor)\nLaboratuvar değerleri aynı birimde\n\n\n\n\n\n\n\n\n\nNotD.3 — Ondalık Ayraç Tutarlılığı\n\n\n\nExcel’in TR sürümü ondalık ayraç olarak virgül kullanır (1,75); ama R/SPSS gibi programlar nokta bekler (1.75).\nÇözüm: Çıktıyı CSV olarak vermeden önce TR Excel’de ayarları değiştirin ya da çıktı sırasında “Decimal: .” seçin.\n\nOndalık ayraç tutarlı (hep virgül ya da hep nokta)\n\n\n\n\n\n🏷️ Bölüm E: Kategorik Sütunlar\n\n\n\n\n\n\nNotE.1 — Tutarlı Yazım\n\n\n\nAynı kategori farklı şekillerde yazılmamış.\nKontrol: Excel’de filtre ekle (Veri → Filtre), her kategorik sütunda dropdown’a bak. Aynı şeyin farklı yazımları varsa birleştir.\n\nCinsiyet: yalnızca Erkek ve Kadın (varyant yok)\nEğitim: tutarlı kategoriler\nMedeni durum: tutarlı kategoriler\nDiğer kategorik sütunlar: tutarlı\n\n\n\n\n\n\n\n\n\nNotE.2 — Boşluk Sorunu Yok\n\n\n\nGörünmez boşluklar (başta/sonda) sebebiyle aynı değer farklı sayılmıyor.\nKontrol: Excel’de =TRIM(A2) formülünü her metin sütununa uygulayın, sonra Özel Yapıştır → Yalnızca Değer ile orijinali güncelleyin.\n\nTüm metin sütunlarında TRIM uygulanmış\n\n\n\n\n\n❓ Bölüm F: Eksik Değerler\n\n\n\n\n\n\nNotF.1 — Boş Hücre = Eksik\n\n\n\nEksik değer için hücre boş bırakılmış, başka bir şey yazılmamış.\n\n“yok” yazılmamış → boş\n“-” yazılmamış → boş\n“NA”, “?” yazılmamış → boş\n“999”, “888” gibi sahte kodlar yok\n\n\n\n\n\n\n\n\n\nNotF.2 — “0” ve “Eksik” Karışmamış\n\n\n\nÖnemli: Sayısal sütunda 0, “ölçüm 0” anlamına gelir, “ölçüm yapılmadı” anlamına gelmez.\nÖrnek: Sigara paket-yılı için 0 “hiç içmemiş”; eksik ise hücre boş olmalı.\n\n0 değeri yalnızca gerçek 0 anlamında\nBelirsiz sıfırlar boş bırakılmış ya da netleştirilmiş\n\n\n\n\n\n🔁 Bölüm G: Duplikatlar\n\n\n\n\n\n\nNotG.1 — Tam Duplikat Yok\n\n\n\nHiçbir satır birebir aynı diğer satırla olmamalı.\nKontrol: Excel’de Veri → Yinelenenleri Kaldır kullan. Önce yedek al, sonra çalıştır.\n\nTam duplikat yok (Excel “Yinelenenleri Kaldır” temiz dedi)\n\n\n\n\n\n\n\n\n\nNotG.2 — Kısmi Duplikat Yok\n\n\n\nAynı hasta, farklı satırlarda farklı bilgilerle iki kere girilmemiş.\nKontrol: hasta_id, ad+soyad+dogum_tarihi kombinasyonlarına göre filtre uygulayıp ara.\n\nAynı hasta birden fazla satırda yok (uzun format zaten ise gözleme bazlı duplikat yok)\n\n\n\n\n\n📋 Bölüm H: Codebook (Kod Sözlüğü)\n\n\n\n\n\n\nNotH.1 — Codebook Var\n\n\n\nVeriyi gönderdiğinizde, alıcı her sütunda ne olduğunu anlayabilmeli.\nAynı Excel dosyasında ayrı bir sayfada veya yan dosya olarak codebook ekleyin. Şunlar olmalı:\n\nSütun adı\nVeri tipi (sayısal, metin, tarih, kategorik)\nBirim (cm, kg, mmHg, vb.)\nAçıklama\nGeçerli değer aralığı / kategori listesi\nCodebook hazırlanmış\nHer sütun için açıklama var\nBirimler belirtilmiş\nKategoriler için olası değerler listelenmiş\n\n\n\n\n\n📁 Bölüm I: Dosya Bilgileri\n\n\n\n\n\n\nNotI.1 — Dosya Adı Anlamlı\n\n\n\nDosyanın adı, ne içerdiğini anlatmalı.\n✅ İyi: koah_kohort_veri_2024-11-15.xlsx\n❌ Kötü: dosya1.xlsx, Yeni Belge.xlsx, son hali (2).xlsx\n\nDosya adı projeyi/içeriği belirtir\nTarih var (sürüm karışıklığı önler)\nTürkçe karakter ve boşluk yok\n\n\n\n\n\n\n\n\n\nNotI.2 — Sürüm Kontrolü\n\n\n\nDaha önceki sürümleri silmemiş, ama doğru sürümü göndermek için ad düzenli olmalı.\n\nHangi dosyanın güncel olduğu belli\nEskiler _arsiv klasörüne taşınmış\n\n\n\n\n\n🎯 Bölüm J: Analiz Hazırlığı\n\n\n\n\n\n\nNotJ.1 — Araştırma Sorusu Net\n\n\n\nBu sütunlar hangi analiz için kullanılacak? Belli bir hipoteziniz var mı?\n\nBirincil sonlanım (outcome) belirlenmiş\nBirincil maruziyet (exposure) belirlenmiş\nKarıştırıcı (confounder) düşünülmüş\nHangi analiz yapılacak (regresyon, sağkalım, vb.) belli\n\n\n\n\n\n\n\n\n\nNotJ.2 — Etik Onay\n\n\n\nVeri toplama etik kurul onaylı mı?\n\nEtik kurul onayı var\nOnay kodu / referansı paylaşılabilir\nHasta onamı alınmış (gerekiyorsa)",
+    "crumbs": [
+      "Ana Sayfa",
+      "📚 Rehber",
+      "5. Kontrol Listesi"
+    ]
+  },
+  {
+    "objectID": "rehber/05-kontrol-listesi.html#hızlı-skor",
+    "href": "rehber/05-kontrol-listesi.html#hızlı-skor",
+    "title": "5. Kontrol Listesi",
+    "section": "🎁 Hızlı Skor",
+    "text": "🎁 Hızlı Skor\nHer kontrol kutucuğu 1 puan. Toplam 42 kontrol.\n\n\n\nSkor\nYorum\n\n\n\n\n42/42\n🎉 Mükemmel! Veriniz hazır, gönderebilirsiniz.\n\n\n38-41\n✅ İyi. Eksikleri tamamlayıp gönderin.\n\n\n30-37\n⚠️ Orta. Eksikler analizde sorun çıkarır, lütfen halledin.\n\n\n&lt;30\n❌ Veri henüz hazır değil. Rehberin başına dönün.",
+    "crumbs": [
+      "Ana Sayfa",
+      "📚 Rehber",
+      "5. Kontrol Listesi"
+    ]
+  },
+  {
+    "objectID": "rehber/05-kontrol-listesi.html#veri-göndermeden-önce-son-adım",
+    "href": "rehber/05-kontrol-listesi.html#veri-göndermeden-önce-son-adım",
+    "title": "5. Kontrol Listesi",
+    "section": "📤 Veri Göndermeden Önce Son Adım",
+    "text": "📤 Veri Göndermeden Önce Son Adım\nVerinizi gönderirken e-postaya/mesaja ekleyin:\nKonu: [Proje adı] — Veri Analiz Talebi\n\nSayın [İstatistikçi],\n\n[Proje adı] çalışmasının verilerini analiz için ekte gönderiyorum.\n\nÇalışma özeti:\n- Tasarım: [örn. retrospektif kohort]\n- Örneklem: [örn. n=312 KOAH hastası]\n- Birincil soru: [örn. \"Geç vs erken NIV başlama mortaliteyi etkiler mi\"]\n\nVeri kontrol durumu:\n- ✅ \"Veri Temizliği Rehberi\" kontrol listesi: 41/42 (J.1 düşünme aşamasında)\n- ✅ Codebook ekte\n- ✅ Etik onay kodu: [kod]\n\nSorularınız için müsaitim.\n\nSaygılarımla,\n[Adınız]\nBu mesaj formatı işinizi çok hızlandıracak. İstatistikçi 30 saniyede sorunun ne olduğunu, verinin ne kadar hazır olduğunu anlayacak.",
+    "crumbs": [
+      "Ana Sayfa",
+      "📚 Rehber",
+      "5. Kontrol Listesi"
+    ]
+  },
+  {
+    "objectID": "rehber/05-kontrol-listesi.html#bitti",
+    "href": "rehber/05-kontrol-listesi.html#bitti",
+    "title": "5. Kontrol Listesi",
+    "section": "✅ Bitti!",
+    "text": "✅ Bitti!\nBu rehberi takip ederek istatistik analiz öncesi en sık karşılaşılan tüm sorunları çözmüş olursunuz.\nSorunuz veya geri bildiriminiz için: GitHub Issues\nBaşarılar! 🎯",
+    "crumbs": [
+      "Ana Sayfa",
+      "📚 Rehber",
+      "5. Kontrol Listesi"
+    ]
+  },
+  {
+    "objectID": "rehber/03-openrefine-rehberi.html",
+    "href": "rehber/03-openrefine-rehberi.html",
+    "title": "3. OpenRefine Rehberi",
+    "section": "",
+    "text": "OpenRefine (eski adıyla Google Refine), kategori temizliği, fuzzy matching ve toplu metin işleme için tasarlanmış ücretsiz ve açık kaynaklı bir araçtır.\n\n\n\n\n\n\nİpucuNeden OpenRefine?\n\n\n\n\nÜcretsiz — kurumsal lisans gerekmez\nYerel — verileriniz bilgisayarınızdan çıkmaz, gizlilik güvende\nTarayıcıda çalışır — ama bilgisayarınıza kurulur, internet gerekmez\nKod yok — tıklayarak kullanılır\nTürkçe karakter desteği — UTF-8 ile sorunsuz çalışır\n\n\n\nOpenRefine’ın en güçlü özelliği Cluster (kümeleme) — Erkek, erkek, E, Erkk gibi tutarsız kategori değerlerini tek tıkla bir araya getirip “hepsi aynı şey” diyebilmenize izin verir.",
+    "crumbs": [
+      "Ana Sayfa",
+      "📚 Rehber",
+      "3. OpenRefine Rehberi"
+    ]
+  },
+  {
+    "objectID": "rehber/03-openrefine-rehberi.html#openrefine-nedir",
+    "href": "rehber/03-openrefine-rehberi.html#openrefine-nedir",
+    "title": "3. OpenRefine Rehberi",
+    "section": "",
+    "text": "OpenRefine (eski adıyla Google Refine), kategori temizliği, fuzzy matching ve toplu metin işleme için tasarlanmış ücretsiz ve açık kaynaklı bir araçtır.\n\n\n\n\n\n\nİpucuNeden OpenRefine?\n\n\n\n\nÜcretsiz — kurumsal lisans gerekmez\nYerel — verileriniz bilgisayarınızdan çıkmaz, gizlilik güvende\nTarayıcıda çalışır — ama bilgisayarınıza kurulur, internet gerekmez\nKod yok — tıklayarak kullanılır\nTürkçe karakter desteği — UTF-8 ile sorunsuz çalışır\n\n\n\nOpenRefine’ın en güçlü özelliği Cluster (kümeleme) — Erkek, erkek, E, Erkk gibi tutarsız kategori değerlerini tek tıkla bir araya getirip “hepsi aynı şey” diyebilmenize izin verir.",
+    "crumbs": [
+      "Ana Sayfa",
+      "📚 Rehber",
+      "3. OpenRefine Rehberi"
+    ]
+  },
+  {
+    "objectID": "rehber/03-openrefine-rehberi.html#kurulum",
+    "href": "rehber/03-openrefine-rehberi.html#kurulum",
+    "title": "3. OpenRefine Rehberi",
+    "section": "3.1 Kurulum",
+    "text": "3.1 Kurulum\n\nWindows\n\nhttps://openrefine.org/download.html adresine gidin\nWindows kit (with embedded Java) seçeneğini indirin (~150 MB)\nZIP dosyasını masaüstüne çıkarın\nKlasör içinde openrefine.exe dosyasını çift tıklayın\nTarayıcınız otomatik açılır: http://127.0.0.1:3333\n\n\n\nMac\n\nAynı sayfadan Mac kit indirin\n.dmg dosyasını açın, OpenRefine uygulamasını Applications klasörüne sürükleyin\nİlk açılışta “developer not verified” uyarısı çıkarsa: sağ tık → Aç → Aç\nTarayıcı otomatik açılır\n\n\n\n\n\n\n\nUyarıJava Gereksinimi\n\n\n\n“Java not found” hatası alırsanız, Java 11 veya üstü kurulu olmalı. Windows için “with embedded Java” sürümü zaten Java içerir.",
+    "crumbs": [
+      "Ana Sayfa",
+      "📚 Rehber",
+      "3. OpenRefine Rehberi"
+    ]
+  },
+  {
+    "objectID": "rehber/03-openrefine-rehberi.html#yeni-proje-oluşturma",
+    "href": "rehber/03-openrefine-rehberi.html#yeni-proje-oluşturma",
+    "title": "3. OpenRefine Rehberi",
+    "section": "3.2 Yeni Proje Oluşturma",
+    "text": "3.2 Yeni Proje Oluşturma\nOpenRefine açılınca karşınıza üç sekme çıkar:\n\nCreate Project — yeni proje oluştur\nOpen Project — daha önce açtığınız projeleri aç\nImport Project — dışa aktarılmış proje yükle\n\n\nAdım 1: Veri Yükleme\nCreate Project → This Computer → Choose Files\nExcel (.xlsx), CSV, TSV, JSON dosyalarını destekler. Excel dosyanızı seçin → Next.\n\n\nAdım 2: Önizleme\nOpenRefine size verinin nasıl yüklenecek olduğunu önizler:\n\n✅ Doğru sayfa (worksheet) seçili mi?\n✅ İlk satır başlık olarak işaretli mi? (“Parse next 1 line(s) as column headers”)\n✅ Türkçe karakterler doğru görünüyor mu? (Encoding: UTF-8)\n❌ Boş satırlar atlanmış mı? (“Skip first N rows” gerekirse kullanın)\n\nSağ üstte Project name girin (örn. koah_veri_v1) → Create Project.",
+    "crumbs": [
+      "Ana Sayfa",
+      "📚 Rehber",
+      "3. OpenRefine Rehberi"
+    ]
+  },
+  {
+    "objectID": "rehber/03-openrefine-rehberi.html#temel-arayüz",
+    "href": "rehber/03-openrefine-rehberi.html#temel-arayüz",
+    "title": "3. OpenRefine Rehberi",
+    "section": "3.3 Temel Arayüz",
+    "text": "3.3 Temel Arayüz\nProje açıldığında şunları görürsünüz:\n\nÜst menü: her sütunda küçük üçgen var → o sütun için işlemler\nSol panel: Facet/Filter (filtreleme alanı) ve Undo/Redo (geri al/ileri al)\nOrta: veri tablosu\n\n\n\n\n\n\n\nİpucuGeri Al güvencesi\n\n\n\nOpenRefine her işlemi kaydeder. Sol panelden Undo / Redo sekmesini açıp herhangi bir adıma geri dönebilirsiniz. Yanlış yapmaktan korkmayın!",
+    "crumbs": [
+      "Ana Sayfa",
+      "📚 Rehber",
+      "3. OpenRefine Rehberi"
+    ]
+  },
+  {
+    "objectID": "rehber/03-openrefine-rehberi.html#facet-sütundaki-tüm-değerleri-görme",
+    "href": "rehber/03-openrefine-rehberi.html#facet-sütundaki-tüm-değerleri-görme",
+    "title": "3. OpenRefine Rehberi",
+    "section": "3.4 Facet — Sütundaki Tüm Değerleri Görme",
+    "text": "3.4 Facet — Sütundaki Tüm Değerleri Görme\nFacet, bir sütundaki tüm benzersiz değerleri ve kaç kez geçtiklerini gösterir. Tutarsız kategorileri görmek için ilk başvurulacak araçtır.\n\nAdım Adım:\n\ncinsiyet sütununun başlığındaki üçgene tıkla\nFacet → Text facet\nSol panelde tüm değerler ve sayıları görünür:\n\nErkek    245\nerkek     32\nE         18\nERKEK     12\nErkk       2\nKadın    198\nkadın     21\nK          7\nTek bakışta tüm tutarsızlıkları görüyorsunuz. Şimdi temizliğe geçelim.",
+    "crumbs": [
+      "Ana Sayfa",
+      "📚 Rehber",
+      "3. OpenRefine Rehberi"
+    ]
+  },
+  {
+    "objectID": "rehber/03-openrefine-rehberi.html#cluster-kategori-temizliğinin-sihri",
+    "href": "rehber/03-openrefine-rehberi.html#cluster-kategori-temizliğinin-sihri",
+    "title": "3. OpenRefine Rehberi",
+    "section": "3.5 Cluster — Kategori Temizliğinin Sihri",
+    "text": "3.5 Cluster — Kategori Temizliğinin Sihri\nCluster OpenRefine’ın yıldız özelliğidir. Benzer ama tam aynı olmayan değerleri otomatik gruplar.\n\nAdım Adım:\n\nAktif facet panelinde sağ üstte Cluster butonu var → tıklayın\nYeni pencerede gruplar görünür:\n\nCluster size: 5      Row count: 309\n- Erkek\n- erkek         } Bunların hepsi aynı sayılsın mı?\n- E                Yeni değer: [Erkek      ] ✅\n- ERKEK            \n- Erkk             \n\nCluster size: 3      Row count: 226\n- Kadın\n- kadın         } Yeni değer: [Kadın      ] ✅\n- K\n\nHer grup için:\n\n✅ Merge? kutusunu işaretle\nNew Cell Value alanına standart değeri yaz (örn. Erkek)\n\nMerge Selected & Re-Cluster butonuna bas\n\nSistem otomatik olarak benzer grupları yeniden tarar; küçük yazım hatalarını da yakalar.\n\n\nCluster Algoritmaları\nOpenRefine birkaç farklı algoritma sunar:\n\n\n\n\n\n\n\n\nMethod\nNe yakalar\nÖrnek\n\n\n\n\nKey collision: fingerprint\nSıralama/küçük-büyük harf farklı\nErkek, erkek, ERKEK\n\n\nKey collision: ngram\nİçerik benzer\nmetformin 500, Metformin 500mg\n\n\nNearest neighbor: levenshtein\nYazım hatası\nErkek, Erkk, Erekk\n\n\nNearest neighbor: PPM\nKomplike eşleşme\nGeniş varyasyonlar\n\n\n\nGenelde fingerprint ile başlayın, sonra ngram, en son levenshtein ile yazım hatalarını yakalayın.",
+    "crumbs": [
+      "Ana Sayfa",
+      "📚 Rehber",
+      "3. OpenRefine Rehberi"
+    ]
+  },
+  {
+    "objectID": "rehber/03-openrefine-rehberi.html#common-transforms-toplu-metin-işleme",
+    "href": "rehber/03-openrefine-rehberi.html#common-transforms-toplu-metin-işleme",
+    "title": "3. OpenRefine Rehberi",
+    "section": "3.6 Common Transforms — Toplu Metin İşleme",
+    "text": "3.6 Common Transforms — Toplu Metin İşleme\nSütun başlığındaki üçgen → Edit cells → Common transforms:\n\n\n\n\n\n\n\nİşlem\nNe yapar\n\n\n\n\nTrim leading and trailing whitespace\nBaş/son boşlukları temizler\n\n\nCollapse consecutive whitespace\nBirden fazla boşluğu tek boşluğa indirir\n\n\nUnescape HTML entities\n&amp; gibi HTML kodlarını çevirir\n\n\nTo uppercase / lowercase / titlecase\nBüyük/küçük/baş harf büyük yapar\n\n\nTo number\nMetni sayıya çevirir\n\n\nTo date\nMetni tarihe çevirir\n\n\n\n\n\n\n\n\n\nİpucuİlk yapılacak iş\n\n\n\nHer metin sütununa şunları uygulayın:\n\nTrim leading and trailing whitespace\nCollapse consecutive whitespace\n\nBu iki işlem görünmez boşluk problemlerinin %90’ını çözer.",
+    "crumbs": [
+      "Ana Sayfa",
+      "📚 Rehber",
+      "3. OpenRefine Rehberi"
+    ]
+  },
+  {
+    "objectID": "rehber/03-openrefine-rehberi.html#tarih-formatı-düzeltme",
+    "href": "rehber/03-openrefine-rehberi.html#tarih-formatı-düzeltme",
+    "title": "3. OpenRefine Rehberi",
+    "section": "3.7 Tarih Formatı Düzeltme",
+    "text": "3.7 Tarih Formatı Düzeltme\ndogum_tarihi sütununda farklı formatlar varsa:\n\nSütun başlığı → Edit cells → Common transforms → To date\n\nOpenRefine çoğu tarihi otomatik tanır. Tanımayanlar için:\n\nSütun başlığı → Edit cells → Transform…\nAçılan kutuya GREL kodu yazın:\n\nvalue.toDate(\"dd.MM.yyyy\")\nBu, 15.03.1965 formatını tarihe çevirir. Sonra:\n\nTüm sütunu standart bir formata yazdırmak için:\n\nvalue.toString(\"yyyy-MM-dd\")",
+    "crumbs": [
+      "Ana Sayfa",
+      "📚 Rehber",
+      "3. OpenRefine Rehberi"
+    ]
+  },
+  {
+    "objectID": "rehber/03-openrefine-rehberi.html#eksik-değerleri-tutarlı-hâle-getirme",
+    "href": "rehber/03-openrefine-rehberi.html#eksik-değerleri-tutarlı-hâle-getirme",
+    "title": "3. OpenRefine Rehberi",
+    "section": "3.8 Eksik Değerleri Tutarlı Hâle Getirme",
+    "text": "3.8 Eksik Değerleri Tutarlı Hâle Getirme\nyok, -, ?, NA gibi metinleri boş hücreye çevirmek için:\n\nSütun → Facet → Text facet\nSol panelde temizlemek istediğiniz değere tıkla (örn. yok)\nTablo o satırlarla filtrelenir\nSütun → Edit cells → Transform…\nKodu yaz:\n\n\"\"\nBu seçili satırlardaki değeri boş yapar. Apply → boş hücreler oluşur.\nAynısını her geçersiz değer için tekrarlayın (-, ?, NA vb.).",
+    "crumbs": [
+      "Ana Sayfa",
+      "📚 Rehber",
+      "3. OpenRefine Rehberi"
+    ]
+  },
+  {
+    "objectID": "rehber/03-openrefine-rehberi.html#duplikatları-bulma",
+    "href": "rehber/03-openrefine-rehberi.html#duplikatları-bulma",
+    "title": "3. OpenRefine Rehberi",
+    "section": "3.9 Duplikatları Bulma",
+    "text": "3.9 Duplikatları Bulma\n\nKarşılaştırmak istediğiniz sütunu sırala: başlık → Sort\nYan sütunda Edit column → Add column based on this column…\nYeni sütun adı: duplicate_check\nGREL ifadesi:\n\nif(row.index &gt; 0 && cells[\"hasta_id\"].value == cells[\"hasta_id\"].cells[row.index - 1].value, \"DUPLICATE\", \"\")\nBu, art arda gelen aynı hasta_id’leri işaretler. Sonra duplicate_check sütununa Facet uygulayıp DUPLICATE olanları görebilirsiniz.",
+    "crumbs": [
+      "Ana Sayfa",
+      "📚 Rehber",
+      "3. OpenRefine Rehberi"
+    ]
+  },
+  {
+    "objectID": "rehber/03-openrefine-rehberi.html#sonucu-dışa-aktarma",
+    "href": "rehber/03-openrefine-rehberi.html#sonucu-dışa-aktarma",
+    "title": "3. OpenRefine Rehberi",
+    "section": "3.10 Sonucu Dışa Aktarma",
+    "text": "3.10 Sonucu Dışa Aktarma\nTemizlik bitince sağ üstte Export butonu:\n\nComma-separated value (CSV) — istatistik programları için en uyumlu format ⭐\nTab-separated value (TSV)\nExcel (XLS) / Excel 2007+ (XLSX)\nHTML table\n\n\n\n\n\n\n\nİpucuNeden CSV?\n\n\n\nCSV (virgülle ayrılmış değer) tüm istatistik programlarının (R, SPSS, Stata, SAS, Python) sorunsuz okuduğu evrensel formattır. Excel’in özelliklerine ihtiyacınız yoksa CSV tercih edin.\n\n\nDışa aktarırken encoding olarak UTF-8 seçtiğinizden emin olun (Türkçe karakterler için).",
+    "crumbs": [
+      "Ana Sayfa",
+      "📚 Rehber",
+      "3. OpenRefine Rehberi"
+    ]
+  },
+  {
+    "objectID": "rehber/03-openrefine-rehberi.html#işinizi-kaydetme",
+    "href": "rehber/03-openrefine-rehberi.html#işinizi-kaydetme",
+    "title": "3. OpenRefine Rehberi",
+    "section": "3.11 İşinizi Kaydetme",
+    "text": "3.11 İşinizi Kaydetme\nOpenRefine işlemleri otomatik kaydeder; programı kapatıp açtığınızda Open Project sekmesinden devam edebilirsiniz.\nBonus: İşlem geçmişini başka bir projeye uygulayabilirsiniz!\n\nUndo/Redo sekmesi → Extract…\nJSON kodunu kopyalayın\nBaşka projede aynı yere → Apply… → JSON yapıştır\nTüm temizlik adımları otomatik uygulanır\n\nBu, aynı tip veri için tekrarlayan temizlik şablonu oluşturmanın yoludur. Çok zaman kazandırır.",
+    "crumbs": [
+      "Ana Sayfa",
+      "📚 Rehber",
+      "3. OpenRefine Rehberi"
+    ]
+  },
+  {
+    "objectID": "rehber/03-openrefine-rehberi.html#mini-pratik",
+    "href": "rehber/03-openrefine-rehberi.html#mini-pratik",
+    "title": "3. OpenRefine Rehberi",
+    "section": "✅ Mini Pratik",
+    "text": "✅ Mini Pratik\nOpenRefine’ı denemek için:\n\nExcel dosyanızdan küçük bir örnek alın (örn. ilk 50 satır)\nYeni proje oluşturun\nŞu sırayı uygulayın:\n\nTüm metin sütunlarına Trim whitespace\nKategorik sütunlara Cluster (en az fingerprint)\ncinsiyet, egitim vb. sütunları standartlaştırın\nTarih sütununu To date ile dönüştürün\n\nSonucu CSV olarak dışa aktarın\nSonucu Excel’de açıp gözden geçirin\n\nİlk denemenizde 30-60 dakika sürebilir. İkinci denemede 10 dakikaya iner. Üçüncüden sonra refleks olur.",
+    "crumbs": [
+      "Ana Sayfa",
+      "📚 Rehber",
+      "3. OpenRefine Rehberi"
+    ]
+  },
+  {
+    "objectID": "rehber/03-openrefine-rehberi.html#video-ve-ek-kaynaklar",
+    "href": "rehber/03-openrefine-rehberi.html#video-ve-ek-kaynaklar",
+    "title": "3. OpenRefine Rehberi",
+    "section": "📺 Video ve Ek Kaynaklar",
+    "text": "📺 Video ve Ek Kaynaklar\n\nResmi OpenRefine kullanıcı kılavuzu: https://openrefine.org/docs\nLibrary Carpentry OpenRefine dersi: https://librarycarpentry.org/lc-open-refine/ (İngilizce, ama görsel olarak çok anlaşılır)\nYouTube’da “OpenRefine Türkçe” araması da bazı temel videolar bulur",
+    "crumbs": [
+      "Ana Sayfa",
+      "📚 Rehber",
+      "3. OpenRefine Rehberi"
+    ]
+  },
+  {
+    "objectID": "rehber/03-openrefine-rehberi.html#bu-bölümün-özeti",
+    "href": "rehber/03-openrefine-rehberi.html#bu-bölümün-özeti",
+    "title": "3. OpenRefine Rehberi",
+    "section": "✅ Bu Bölümün Özeti",
+    "text": "✅ Bu Bölümün Özeti\nOpenRefine’ı öğrenmek 1-2 saatlik bir yatırımdır ve sonrası boyunca size her veri için saatler kazandırır. Özellikle Cluster özelliği, başka hiçbir araçta bu kadar pratik değildir.\nEğer biraz R denemek isterseniz: 4. R ile Temizlik →\nVerinizin hazır olup olmadığını kontrol etmek isterseniz: 5. Kontrol Listesi →",
+    "crumbs": [
+      "Ana Sayfa",
+      "📚 Rehber",
+      "3. OpenRefine Rehberi"
+    ]
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "🧹 Veri Temizliği Rehberi",
+    "section": "",
+    "text": "Klinik araştırmacılar için pratik bir başlangıç",
+    "crumbs": [
+      "Ana Sayfa",
+      "🏠 Ana Sayfa"
+    ]
+  },
+  {
+    "objectID": "index.html#bu-rehber-kimin-için",
+    "href": "index.html#bu-rehber-kimin-için",
+    "title": "🧹 Veri Temizliği Rehberi",
+    "section": "👋 Bu Rehber Kimin İçin?",
+    "text": "👋 Bu Rehber Kimin İçin?\nBu rehber; istatistiksel analiz için bana, bir biyoistatistikçiye ya da metodoloji danışmanına başvurmadan önce kendi verisini hazırlamak isteyen araştırmacılar için yazıldı.\nHedef kitle:\n\nKlinisyenler ve sağlık araştırmacıları\nTez aşamasındaki uzmanlık ve doktora öğrencileri\nExcel’i günlük araç olarak kullanan, ama kod yazmayan araştırmacılar\n“Verim hazır mı, hazır değil mi” sorusuna net cevap arayanlar",
+    "crumbs": [
+      "Ana Sayfa",
+      "🏠 Ana Sayfa"
+    ]
+  },
+  {
+    "objectID": "index.html#neden-veri-temizliği",
+    "href": "index.html#neden-veri-temizliği",
+    "title": "🧹 Veri Temizliği Rehberi",
+    "section": "🎯 Neden Veri Temizliği?",
+    "text": "🎯 Neden Veri Temizliği?\nBir veri analizi projesinin %60-80’i veri temizliğine harcanır. Eğer veriniz analiz için hazır değilse:\n\n❌ Yanlış sonuçlar üretebilirsiniz\n❌ Yayın hakem süreçlerinde geri dönüşler yersiniz\n\n❌ İstatistikçi ile defalarca yazışmak zorunda kalırsınız\n❌ Zaman ve enerji kaybedersiniz\n\nBu rehber, verinizi bir uzmana göndermeden önce kendi başınıza halledebileceğiniz adımları gösterir.",
+    "crumbs": [
+      "Ana Sayfa",
+      "🏠 Ana Sayfa"
+    ]
+  },
+  {
+    "objectID": "index.html#rehber-içeriği",
+    "href": "index.html#rehber-içeriği",
+    "title": "🧹 Veri Temizliği Rehberi",
+    "section": "📚 Rehber İçeriği",
+    "text": "📚 Rehber İçeriği\n\n\n1. Veri Toplama Disiplini\nDaha veri toplamadan, doğru başlamak için bilmeniz gereken prensipler. Kod sözlüğü, uzun format, isimlendirme kuralları.\nBaşla →\n\n\n2. Sık Karşılaşılan Sorunlar\nBirleştirilmiş hücreler, tarih kabusu, eksik değer kodlaması, kategori tutarsızlıkları — örneklerle.\nBaşla →\n\n\n3. OpenRefine Rehberi\nKod yazmadan, tarayıcıda çalışan ücretsiz araçla veri temizliği. Adım adım anlatım.\nBaşla →\n\n\n4. R ile Temizlik\nOtomatik kontrol raporu üretmek isteyenler için R’ın janitor paketiyle pratik temizlik.\nBaşla →\n\n\n5. Kontrol Listesi\nİstatistikçinize göndermeden önce verinizin geçmesi gereken sınav. Tek sayfa.\nBaşla →",
+    "crumbs": [
+      "Ana Sayfa",
+      "🏠 Ana Sayfa"
+    ]
+  },
+  {
+    "objectID": "index.html#nereden-başlayayım",
+    "href": "index.html#nereden-başlayayım",
+    "title": "🧹 Veri Temizliği Rehberi",
+    "section": "🚀 Nereden Başlayayım?",
+    "text": "🚀 Nereden Başlayayım?\n\n\n\n\n\n\nİpucuHızlı yol haritası\n\n\n\n\nVeri henüz toplanmadıysa: 1. Veri Toplama Disiplini ile başlayın.\nVeri elde, kirli, R bilmiyorum: 3. OpenRefine Rehberi.\nVeri elde, biraz R bilirim: 4. R ile Temizlik.\n“Hazır mı?” diye kontrol etmek istiyorum: 5. Kontrol Listesi.",
+    "crumbs": [
+      "Ana Sayfa",
+      "🏠 Ana Sayfa"
+    ]
+  },
+  {
+    "objectID": "index.html#lisans-ve-katkı",
+    "href": "index.html#lisans-ve-katkı",
+    "title": "🧹 Veri Temizliği Rehberi",
+    "section": "📜 Lisans ve Katkı",
+    "text": "📜 Lisans ve Katkı\nBu rehber CC BY 4.0 altında paylaşılmaktadır. Kaynağı belirterek özgürce kullanabilir, dağıtabilir ve uyarlayabilirsiniz.\nHata ya da öneri için GitHub Issues üzerinden ulaşabilirsiniz.\n\n\n“Hatalı veri, hatalı sonuç. Garbage in, garbage out.”",
+    "crumbs": [
+      "Ana Sayfa",
+      "🏠 Ana Sayfa"
+    ]
+  },
+  {
+    "objectID": "rehber/02-sik-sorunlar.html",
+    "href": "rehber/02-sik-sorunlar.html",
+    "title": "2. Sık Karşılaşılan Sorunlar",
+    "section": "",
+    "text": "Bu bölümde, klinik araştırmacılardan bana ulaşan Excel dosyalarında en sık gördüğüm 10 problemi örneklerle anlatacağım. Her sorun için: nasıl tanırsınız, neden problem, hızlı çözümü.",
+    "crumbs": [
+      "Ana Sayfa",
+      "📚 Rehber",
+      "2. Sık Karşılaşılan Sorunlar"
+    ]
+  },
+  {
+    "objectID": "rehber/02-sik-sorunlar.html#problem-1-birleştirilmiş-hücreler",
+    "href": "rehber/02-sik-sorunlar.html#problem-1-birleştirilmiş-hücreler",
+    "title": "2. Sık Karşılaşılan Sorunlar",
+    "section": "Problem 1: Birleştirilmiş Hücreler",
+    "text": "Problem 1: Birleştirilmiş Hücreler\nNasıl görünür?\n| HASTA BİLGİLERİ                  | LABORATUVAR        |\n| ad      soyad    yas   cinsiyet  | wbc      crp       |\n| Ahmet   Yıl.    65     E         | 8.5      12        |\nİlk satır iki birleştirilmiş hücre içeriyor.\nNeden problem?\nR, Python ve istatistik programları birleştirilmiş hücreyi okuyamaz. Programa veri yüklenince başlıklar NA, NA, NA, NA, NA, NA gibi okunur.\nÇözüm:\n\nTüm tabloyu seçin\nSağ tık → Hücreleri Biçimlendir → Hizalama\n“Hücreleri birleştir” kutusunu boşaltın\nÜst satırı silin (zaten gereksizdi), alt satırı tek başlık olarak bırakın",
+    "crumbs": [
+      "Ana Sayfa",
+      "📚 Rehber",
+      "2. Sık Karşılaşılan Sorunlar"
+    ]
+  },
+  {
+    "objectID": "rehber/02-sik-sorunlar.html#problem-2-çift-başlık-satırı",
+    "href": "rehber/02-sik-sorunlar.html#problem-2-çift-başlık-satırı",
+    "title": "2. Sık Karşılaşılan Sorunlar",
+    "section": "Problem 2: Çift Başlık Satırı",
+    "text": "Problem 2: Çift Başlık Satırı\nNasıl görünür?\nİki satırlık sütun başlıkları:\n| Yaş | Tansiyon            | Kolesterol           |\n|     | Sistolik | Diyastolik| Total | LDL | HDL    |\n| 65  | 120      | 80        | 220   | 140 | 50     |\nNeden problem?\nVeri tek başlık satırı bekler. İki satırlı başlık karışık veri tipi yaratır.\nÇözüm:\nTek satıra indirin, gruplamayı sütun adının kendisinde belirtin:\n| yas | tansiyon_sistolik | tansiyon_diyastolik | kol_total | kol_ldl | kol_hdl |\n|  65 | 120               | 80                  | 220       | 140     | 50      |",
+    "crumbs": [
+      "Ana Sayfa",
+      "📚 Rehber",
+      "2. Sık Karşılaşılan Sorunlar"
+    ]
+  },
+  {
+    "objectID": "rehber/02-sik-sorunlar.html#problem-3-tarih-formatı-karmaşası",
+    "href": "rehber/02-sik-sorunlar.html#problem-3-tarih-formatı-karmaşası",
+    "title": "2. Sık Karşılaşılan Sorunlar",
+    "section": "Problem 3: Tarih Formatı Karmaşası",
+    "text": "Problem 3: Tarih Formatı Karmaşası\nNasıl görünür?\n| dogum_tarihi |\n| 15.03.1965   |\n| 23/04/1972   |\n| 1968-12-01   |\n| 5-Mart-1980  |\n| 38563        |\nBeş farklı format aynı sütunda.\nNeden problem?\nHiçbir program tutarsız formatı otomatik yorumlayamaz. Üstelik 38563 Excel’in iç tarih sayısıdır (2005-08-21); başka programa gidince anlamsızlaşır.\nÇözüm:\n\n\n\n\n\n\nÖnemliTek format: YYYY-AA-GG\n\n\n\nTüm tarihleri elle ya da Excel’in Bul-Değiştir özelliğiyle bu formata çevirin.\n\n\nExcel’de hızlı çözüm:\n\nTarih sütununu seçin\nSağ tık → Hücreleri Biçimlendir → Tarih\nTür: 2012-03-14 seçin\nEğer Excel hâlâ hatalı yorumluyorsa, =TEXT(A2, \"yyyy-mm-dd\") formülüyle yeni sütun oluşturun",
+    "crumbs": [
+      "Ana Sayfa",
+      "📚 Rehber",
+      "2. Sık Karşılaşılan Sorunlar"
+    ]
+  },
+  {
+    "objectID": "rehber/02-sik-sorunlar.html#problem-4-eksik-değer-kodlama-tutarsızlığı",
+    "href": "rehber/02-sik-sorunlar.html#problem-4-eksik-değer-kodlama-tutarsızlığı",
+    "title": "2. Sık Karşılaşılan Sorunlar",
+    "section": "Problem 4: Eksik Değer Kodlama Tutarsızlığı",
+    "text": "Problem 4: Eksik Değer Kodlama Tutarsızlığı\nNasıl görünür?\n| sigara_paket_yili |\n| 25                |\n| yok               |\n| -                 |\n| ?                 |\n| 0                 |\n| NA                |\n| (boş)             |\n| veri yok          |\nAynı sütunda eksiklik 8 farklı yöntemle ifade edilmiş.\nNeden problem?\n\nProgramlar yalnızca boş hücreyi NA olarak tanır\nSütun “yok” yüzünden metin sanılır, ortalama alınamaz\n“0” gerçek 0 ile karışır (sigara hiç kullanmamış olabilir!)\n\nÇözüm:\n\n\n\n\n\n\nİpucuHızlı düzeltme\n\n\n\nExcel’de Bul-Değiştir (Ctrl+H):\n\n\n\nAranan\nDeğiştirilecek\n\n\n\n\nyok\n(boş)\n\n\n-\n(boş)\n\n\n?\n(boş)\n\n\nNA\n(boş)\n\n\nveri yok\n(boş)\n\n\n\n“0” değerine dokunmayın — gerçekten 0 olabilir, hastaya sorup kontrol edin.",
+    "crumbs": [
+      "Ana Sayfa",
+      "📚 Rehber",
+      "2. Sık Karşılaşılan Sorunlar"
+    ]
+  },
+  {
+    "objectID": "rehber/02-sik-sorunlar.html#problem-5-kategori-tutarsızlıkları",
+    "href": "rehber/02-sik-sorunlar.html#problem-5-kategori-tutarsızlıkları",
+    "title": "2. Sık Karşılaşılan Sorunlar",
+    "section": "Problem 5: Kategori Tutarsızlıkları",
+    "text": "Problem 5: Kategori Tutarsızlıkları\nNasıl görünür?\n| cinsiyet  |\n| Erkek     |\n| erkek     |\n| ERKEK     |\n| E         |\n| Erkk      |  ← yazım hatası\n| Erkek     |\n| Kadın     |\nProgramlar bunu 5 farklı kategori olarak görür.\nÇözüm:\nOpenRefine’da Cluster özelliği bunu tek tıkla halleder (Bölüm 3). Manuel çözüm için Excel’de:\n\nSütunu kopyala, yan sütuna yapıştır (yedek)\nBul-Değiştir (Ctrl+H):\n\nerkek → Erkek (Eşleştirme: tüm hücre dahil değil)\nERKEK → Erkek\nE → Erkek (sadece tam hücre eşleşmesi)\nErkk → Erkek",
+    "crumbs": [
+      "Ana Sayfa",
+      "📚 Rehber",
+      "2. Sık Karşılaşılan Sorunlar"
+    ]
+  },
+  {
+    "objectID": "rehber/02-sik-sorunlar.html#problem-6-karışık-veri-tipi-sayısal-sütunda-metin",
+    "href": "rehber/02-sik-sorunlar.html#problem-6-karışık-veri-tipi-sayısal-sütunda-metin",
+    "title": "2. Sık Karşılaşılan Sorunlar",
+    "section": "Problem 6: Karışık Veri Tipi (Sayısal Sütunda Metin)",
+    "text": "Problem 6: Karışık Veri Tipi (Sayısal Sütunda Metin)\nNasıl görünür?\n| boy_cm    |\n| 165       |\n| 170       |\n| 1.75 m    |  ← metin\n| 168 cm    |  ← metin\n| 172       |\n| \"yaklaşık 170\" |  ← metin\nNeden problem?\nSütunun bir kısmı sayı, bir kısmı metin. Program tüm sütunu metin olarak yükler, ortalama alamazsınız.\nÇözüm:\n\nSütunda metin içeren hücreleri tespit edin (hızlı yol: hücreleri sayısal formatla biçimlendirin, sayıya dönüşmeyenler metindir)\nBirim/açıklama içeriyorsa kaldırın: 1.75 m → 175, 168 cm → 168\nBelirsiz olanları boş bırakın ya da yeni sütunda not edin",
+    "crumbs": [
+      "Ana Sayfa",
+      "📚 Rehber",
+      "2. Sık Karşılaşılan Sorunlar"
+    ]
+  },
+  {
+    "objectID": "rehber/02-sik-sorunlar.html#problem-7-duplikat-yinelenen-kayıtlar",
+    "href": "rehber/02-sik-sorunlar.html#problem-7-duplikat-yinelenen-kayıtlar",
+    "title": "2. Sık Karşılaşılan Sorunlar",
+    "section": "Problem 7: Duplikat (Yinelenen) Kayıtlar",
+    "text": "Problem 7: Duplikat (Yinelenen) Kayıtlar\nNasıl görünür?\nAynı hasta_id’nin birden fazla satırda olması (yanlışlıkla iki kez girilmiş) ya da farklı satırların aynı hastanın olduğu, ID farklı olsa bile.\nİki tür duplikat var:\n\n\n\n\n\n\n\n\nTür\nTanım\nTespit\n\n\n\n\nTam duplikat\nTüm sütunlar aynı\nKolay (sıralayıp gözlemek yeterli)\n\n\nKısmi duplikat\nAynı kişi, farklı satırlar\nZor (ad+doğum tarihi gibi kombinasyonlar lazım)\n\n\n\nÇözüm:\nExcel’de:\n\nVeri → Yinelenenleri Kaldır\nKarşılaştırma için sütun seç (örn. hasta_id, ad, dogum_tarihi)\nSonucu kontrol et\n\n\n\n\n\n\n\nUyarıDikkat\n\n\n\n“Yinelenenleri Kaldır” sadece tam eşleşmeleri bulur. Ahmet ile Ahmet (sonda boşluk) farklı sayılır. Önce TRIM uygulayın (Problem 10).\n\n\nR’da daha sağlam çözüm: janitor::get_dupes() (Bölüm 4).",
+    "crumbs": [
+      "Ana Sayfa",
+      "📚 Rehber",
+      "2. Sık Karşılaşılan Sorunlar"
+    ]
+  },
+  {
+    "objectID": "rehber/02-sik-sorunlar.html#problem-8-toplam-özet-satırları",
+    "href": "rehber/02-sik-sorunlar.html#problem-8-toplam-özet-satırları",
+    "title": "2. Sık Karşılaşılan Sorunlar",
+    "section": "Problem 8: Toplam / Özet Satırları",
+    "text": "Problem 8: Toplam / Özet Satırları\nNasıl görünür?\nVerinin içinde toplam veya ortalama satırları var:\n| hasta_id | yas | bmi  |\n| 1        | 65  | 28   |\n| 2        | 58  | 24   |\n| 3        | 72  | 31   |\n| TOPLAM   | 195 | 83   |  ← bu satır veri değil!\nNeden problem?\nProgram bu satırı da hasta sayar. Ortalama hesaplanırsa, gerçek ortalama 27.7 yerine 41 çıkar.\nÇözüm:\nVeri girişi sırasında özet satırı koymayın. Eğer varsa: silin. Özet bilgi gerekiyorsa ayrı bir sayfada/dosyada tutun.",
+    "crumbs": [
+      "Ana Sayfa",
+      "📚 Rehber",
+      "2. Sık Karşılaşılan Sorunlar"
+    ]
+  },
+  {
+    "objectID": "rehber/02-sik-sorunlar.html#problem-9-birden-fazla-değer-aynı-hücrede",
+    "href": "rehber/02-sik-sorunlar.html#problem-9-birden-fazla-değer-aynı-hücrede",
+    "title": "2. Sık Karşılaşılan Sorunlar",
+    "section": "Problem 9: Birden Fazla Değer Aynı Hücrede",
+    "text": "Problem 9: Birden Fazla Değer Aynı Hücrede\nNasıl görünür?\n| ilaclar                                           |\n| metformin, lisinopril, statin                    |\n| insulin + metformin                              |\n| sadece metformin                                  |\n| metformin/lisinopril                              |\nBir hücrede 1-3 ilaç adı, hepsi farklı ayraçla.\nNeden problem?\n“Hangi hastalar metformin kullanıyor?” sorusunu cevaplayamazsınız — program tek bir metin olarak görür.\nÇözüm — İki yaklaşım:\n\nYaklaşım A: Wide format (her ilaç bir sütun)\n| metformin_var | lisinopril_var | statin_var | insulin_var |\n| 1             | 1              | 1          | 0           |\n| 1             | 0              | 0          | 1           |\n| 1             | 0              | 0          | 0           |\n| 1             | 1              | 0          | 0           |\nİlaç sayısı az ve sabitse bu yaklaşım iyi.\n\n\nYaklaşım B: Long format (her ilaç ayrı satır)\n| hasta_id | ilac        |\n| 1        | metformin   |\n| 1        | lisinopril  |\n| 1        | statin      |\n| 2        | insulin     |\n| 2        | metformin   |\nHastaya göre ilaç sayısı değişiyorsa bu yaklaşım daha uygun.",
+    "crumbs": [
+      "Ana Sayfa",
+      "📚 Rehber",
+      "2. Sık Karşılaşılan Sorunlar"
+    ]
+  },
+  {
+    "objectID": "rehber/02-sik-sorunlar.html#problem-10-boşluk-ve-görünmez-karakter-sorunları",
+    "href": "rehber/02-sik-sorunlar.html#problem-10-boşluk-ve-görünmez-karakter-sorunları",
+    "title": "2. Sık Karşılaşılan Sorunlar",
+    "section": "Problem 10: Boşluk ve Görünmez Karakter Sorunları",
+    "text": "Problem 10: Boşluk ve Görünmez Karakter Sorunları\nNasıl görünür?\nGörünmez ama orada olan boşluklar:\n| ad      |\n| Ahmet   |  ← görünür sade\n| Ahmet   |  ← sonunda boşluk var\n|  Ahmet  |  ← başında ve sonunda boşluk\n| Ahmet  |  ← TAB karakteri var\nEkrandan ayırt edemezsiniz, ama program bunları dört farklı kişi sanır.\nÇözüm:\nExcel’de TRIM fonksiyonu:\n=TRIM(A2)\nBu formül başındaki, sonundaki ve içerideki çoklu boşlukları temizler. Tüm metin sütunlarına uygulayın.\n\n\n\n\n\n\nİpucuToplu TRIM uygulama\n\n\n\n\nYan sütunda =TRIM(A2) yazın\nAşağı çekin (formül tüm satırlara uygulanır)\nYeni sütunu kopyalayın → Özel Yapıştır → Yalnızca Değer\nEski sütunu silin",
+    "crumbs": [
+      "Ana Sayfa",
+      "📚 Rehber",
+      "2. Sık Karşılaşılan Sorunlar"
+    ]
+  },
+  {
+    "objectID": "rehber/02-sik-sorunlar.html#bu-bölümün-özeti",
+    "href": "rehber/02-sik-sorunlar.html#bu-bölümün-özeti",
+    "title": "2. Sık Karşılaşılan Sorunlar",
+    "section": "✅ Bu Bölümün Özeti",
+    "text": "✅ Bu Bölümün Özeti\n10 problemden hangileri sizin verinizde var? Her problem için ayrı bir düzeltme yaklaşımı var ve çoğu Excel içinde çözülebilir.\nSıradaki bölüm — bu problemleri toplu çözen güçlü bir araç:\n3. OpenRefine Rehberi →",
+    "crumbs": [
+      "Ana Sayfa",
+      "📚 Rehber",
+      "2. Sık Karşılaşılan Sorunlar"
+    ]
+  },
+  {
+    "objectID": "rehber/01-veri-toplama-disiplini.html",
+    "href": "rehber/01-veri-toplama-disiplini.html",
+    "title": "1. Veri Toplama Disiplini",
+    "section": "",
+    "text": "Veri temizliğinin %80’i, veri toplama aşamasında önlenebilir. Veriniz daha toplanırken bazı kuralları izlerseniz, sonradan saatlerce yapacağınız iş ortadan kalkar.\nBu bölüm, henüz veri toplamamış araştırmacılar içindir. Veriniz hazırsa doğrudan 2. Sık Karşılaşılan Sorunlar bölümüne geçebilirsiniz.",
+    "crumbs": [
+      "Ana Sayfa",
+      "📚 Rehber",
+      "1. Veri Toplama Disiplini"
+    ]
+  },
+  {
+    "objectID": "rehber/01-veri-toplama-disiplini.html#neden-önemli",
+    "href": "rehber/01-veri-toplama-disiplini.html#neden-önemli",
+    "title": "1. Veri Toplama Disiplini",
+    "section": "",
+    "text": "Veri temizliğinin %80’i, veri toplama aşamasında önlenebilir. Veriniz daha toplanırken bazı kuralları izlerseniz, sonradan saatlerce yapacağınız iş ortadan kalkar.\nBu bölüm, henüz veri toplamamış araştırmacılar içindir. Veriniz hazırsa doğrudan 2. Sık Karşılaşılan Sorunlar bölümüne geçebilirsiniz.",
+    "crumbs": [
+      "Ana Sayfa",
+      "📚 Rehber",
+      "1. Veri Toplama Disiplini"
+    ]
+  },
+  {
+    "objectID": "rehber/01-veri-toplama-disiplini.html#tidy-data-prensipleri",
+    "href": "rehber/01-veri-toplama-disiplini.html#tidy-data-prensipleri",
+    "title": "1. Veri Toplama Disiplini",
+    "section": "1.1 Tidy Data Prensipleri",
+    "text": "1.1 Tidy Data Prensipleri\nİstatistikçi Hadley Wickham’ın “tidy data” olarak adlandırdığı yaklaşım, modern veri biliminin omurgasıdır. Üç basit kural:\n\n\n\n\n\n\nNotTidy data kuralları\n\n\n\n\nHer satır bir gözlemdir (örn. bir hasta, bir ölçüm, bir vaka)\nHer sütun bir değişkendir (örn. yaş, cinsiyet, tansiyon)\nHer hücre tek bir değer içerir (birden fazla değer aynı hücrede olmamalı)\n\n\n\n\nYanlış Örnek\n\n\n\nHasta\nTansiyon ölçümleri\n\n\n\n\nAhmet\n120/80, 130/85, 125/82\n\n\nAyşe\n110/70, 115/72\n\n\n\nBurada sorunlar:\n\nBir hücrede birden fazla değer\nSistolik ve diyastolik aynı hücrede\nKaç ölçüm olduğu satırdan satıra değişiyor\n\n\n\nDoğru Örnek\n\n\n\nhasta_id\nolcum_no\nsistolik\ndiyastolik\n\n\n\n\n1\n1\n120\n80\n\n\n1\n2\n130\n85\n\n\n1\n3\n125\n82\n\n\n2\n1\n110\n70\n\n\n2\n2\n115\n72\n\n\n\nHer ölçüm ayrı satır, her değişken ayrı sütun. Bu yapıya uzun format (long format) denir ve istatistik yazılımlarının beklediği formattır.",
+    "crumbs": [
+      "Ana Sayfa",
+      "📚 Rehber",
+      "1. Veri Toplama Disiplini"
+    ]
+  },
+  {
+    "objectID": "rehber/01-veri-toplama-disiplini.html#sütun-isimlendirme-kuralları",
+    "href": "rehber/01-veri-toplama-disiplini.html#sütun-isimlendirme-kuralları",
+    "title": "1. Veri Toplama Disiplini",
+    "section": "1.2 Sütun İsimlendirme Kuralları",
+    "text": "1.2 Sütun İsimlendirme Kuralları\n\n\n\n\n\n\nUyarıExcel’de sütun başlığı yazarken\n\n\n\n\n❌ Türkçe karakter (ğ, ü, ş, ı, ö, ç) kullanmayın\n❌ Boşluk koymayın\n❌ Özel karakter (?, !, %, *, /) kullanmayın\n❌ Rakamla başlatmayın\n\n\n\n\nÖnerilen yöntem: snake_case\nTüm harfleri küçük tut, kelimeleri alt çizgi (_) ile birleştir:\n\n\n\n❌ Kötü\n✅ İyi\n\n\n\n\nDoğum Tarihi\ndogum_tarihi\n\n\nYaş (yıl)\nyas_yil\n\n\nTansiyon-Sistolik\nsistolik\n\n\n1. Ölçüm\nolcum_1\n\n\nBMI(kg/m²)\nbmi\n\n\n\n\n\nİyi sütun adı özellikleri\n\nKısa ama anlamlı (3-25 karakter)\nBirim bilgisi gerekiyorsa adın içinde (agirlik_kg, boy_cm)\nTutarlı (tüm tarih sütunları *_tarih, tüm sayım sütunları *_sayisi vb.)\nAnlaşılır (x1, var2 gibi anlamsız adlardan kaçının)",
+    "crumbs": [
+      "Ana Sayfa",
+      "📚 Rehber",
+      "1. Veri Toplama Disiplini"
+    ]
+  },
+  {
+    "objectID": "rehber/01-veri-toplama-disiplini.html#eksik-değer-protokolü",
+    "href": "rehber/01-veri-toplama-disiplini.html#eksik-değer-protokolü",
+    "title": "1. Veri Toplama Disiplini",
+    "section": "1.3 Eksik Değer Protokolü",
+    "text": "1.3 Eksik Değer Protokolü\nBu, en sık yapılan hatadır.\n\n\n\n\n\n\nÖnemliEksik değer için tek kural\n\n\n\nHücreyi boş bırakın.\n“yok”, “-”, “?”, “0”, “999”, “NA”, “veri yok” yazmayın.\n\n\n\nNeden?\nİstatistik programları boş hücreyi otomatik olarak “eksik değer (NA)” olarak tanır. Ama “yok” yazarsanız, programa bunu özel olarak söylemeniz gerekir. Üstelik:\n\nSütun bazen sayısal bazen metin olur (programlar sütunu metin sanır)\n“0” yazarsanız analiz “ölçüm 0” sanar (gerçek 0 ile karışır)\n“999” yazarsanız ortalamayı bozar\n\n\n\nEksik Değer Nedeni Önemliyse\nBazı durumlarda neden eksik olduğunu kayıt etmek istersiniz. O zaman ek bir sütun açın:\n\n\n\nhasta_id\nbmi\nbmi_neden_eksik\n\n\n\n\n1\n24.5\n(boş)\n\n\n2\n\nhasta_olcum_reddetti\n\n\n3\n\ncihaz_arizasi\n\n\n\nBu yaklaşım hem analizi bozmaz hem de bilgiyi korur.",
+    "crumbs": [
+      "Ana Sayfa",
+      "📚 Rehber",
+      "1. Veri Toplama Disiplini"
+    ]
+  },
+  {
+    "objectID": "rehber/01-veri-toplama-disiplini.html#tarih-formatı",
+    "href": "rehber/01-veri-toplama-disiplini.html#tarih-formatı",
+    "title": "1. Veri Toplama Disiplini",
+    "section": "1.4 Tarih Formatı",
+    "text": "1.4 Tarih Formatı\nTarih, Excel’in en büyük kabusu. Çözümü tek bir kuralla halleder:\n\n\n\n\n\n\nİpucuTarih için tek format: ISO 8601\n\n\n\nYYYY-AA-GG (örn. 2024-03-15)\nBu format dünya çapında standarttır, tüm yazılımlar tanır, sıralama otomatik doğrudur, dilden bağımsızdır.\n\n\n\nNeden ISO 8601?\n\n\n\nFormat\nSorun\n\n\n\n\n15.03.2024\nTR formatı, US programları yanlış okur\n\n\n03/15/2024\nUS formatı, TR programları yanlış okur\n\n\n15-Mar-24\n“Mar” ay isimleri dile bağlı\n\n\n15 Mart 2024\nHiçbir program otomatik tanımaz\n\n\n2024-03-15\n✅ Evrensel, sıralanabilir, makinece okunabilir\n\n\n\n\n\nExcel’de tarih girerken\n\nSütunu seç\nSağ tık → Hücreleri Biçimlendir → Sayı → Tarih\nTür: 2012-03-14 formatını seç\nTüm tarihleri bu formatta gir\n\n\n\n\n\n\n\nUyarıExcel’in tarih tuzağı\n\n\n\nExcel bazen 1.5, 2/3, 15-3 gibi metinleri otomatik tarihe çevirir. Önlemek için: hücreyi önce Metin olarak biçimlendirin ya da girişin başına tek tırnak (') ekleyin: '1.5.",
+    "crumbs": [
+      "Ana Sayfa",
+      "📚 Rehber",
+      "1. Veri Toplama Disiplini"
+    ]
+  },
+  {
+    "objectID": "rehber/01-veri-toplama-disiplini.html#kategori-değerleri-için-sözlük",
+    "href": "rehber/01-veri-toplama-disiplini.html#kategori-değerleri-için-sözlük",
+    "title": "1. Veri Toplama Disiplini",
+    "section": "1.5 Kategori Değerleri için Sözlük",
+    "text": "1.5 Kategori Değerleri için Sözlük\nCinsiyet, eğitim, medeni durum gibi kategorik değişkenlerde tek bir kelime listesi belirleyin ve veriyi girenler hep aynı kelimeyi kullansın.\n\nKötü örnek\n\n\n\ncinsiyet\n\n\n\n\nErkek\n\n\nerkek\n\n\nE\n\n\nERKEK\n\n\nK\n\n\nKadın\n\n\nKdn\n\n\n\nİstatistik programı bunları 7 farklı kategori sayar. Sonradan birleştirmek zaman alır.\n\n\nİyi örnek\nBir kod sözlüğü belirleyin ve dosyaya yapıştırın:\ncinsiyet: \"Erkek\" veya \"Kadın\" (büyük harf-küçük harf duyarlı)\negitim:   \"Okur-yazar değil\", \"İlkokul\", \"Ortaokul\", \"Lise\", \"Üniversite\", \"Lisansüstü\"\nmedeni:   \"Bekar\", \"Evli\", \"Boşanmış\", \"Dul\"\nVeri girişi yapan herkesin bu listeyi açıp ona göre yazması, sonradan saatlerce sürecek temizliği önler.",
+    "crumbs": [
+      "Ana Sayfa",
+      "📚 Rehber",
+      "1. Veri Toplama Disiplini"
+    ]
+  },
+  {
+    "objectID": "rehber/01-veri-toplama-disiplini.html#kod-sözlüğü-codebook",
+    "href": "rehber/01-veri-toplama-disiplini.html#kod-sözlüğü-codebook",
+    "title": "1. Veri Toplama Disiplini",
+    "section": "1.6 Kod Sözlüğü (Codebook)",
+    "text": "1.6 Kod Sözlüğü (Codebook)\nVeri tabanınızla birlikte bir codebook dosyası tutun. Bu, hangi sütunda ne olduğunu, birimlerini, değerlerin anlamını yazdığınız bir tablodur.\n\nÖrnek Kod Sözlüğü\n\n\n\nsutun\ntip\nbirim\naciklama\ngecerli_degerler\n\n\n\n\nhasta_id\nsayisal\n—\nBenzersiz hasta numarası\n1-9999\n\n\ndogum_tarihi\ntarih\n—\nHastanın doğum tarihi\nYYYY-AA-GG\n\n\ncinsiyet\nkategorik\n—\nHastanın cinsiyeti\nErkek, Kadın\n\n\nboy_cm\nsayisal\ncm\nHastanın boyu\n100-220\n\n\nagirlik_kg\nsayisal\nkg\nHastanın ağırlığı\n30-200\n\n\nsistolik\nsayisal\nmmHg\nSistolik kan basıncı\n60-260\n\n\ndiyabet_var\nkategorik\n—\nDiyabet öyküsü\nVar, Yok, Bilinmiyor\n\n\n\nBu tablo aynı Excel dosyasında ayrı bir sayfa olarak (örn. “codebook” sayfası) tutulabilir.\n\n\n\n\n\n\nİpucuCodebook altın kuraldır\n\n\n\nCodebook olmadan veri toplamak, etiketsiz şişeleri laboratuvar dolabına koymaya benzer. 6 ay sonra hangi şişede ne olduğunu kimse hatırlamaz.",
+    "crumbs": [
+      "Ana Sayfa",
+      "📚 Rehber",
+      "1. Veri Toplama Disiplini"
+    ]
+  },
+  {
+    "objectID": "rehber/01-veri-toplama-disiplini.html#excel-dosyası-yapısı",
+    "href": "rehber/01-veri-toplama-disiplini.html#excel-dosyası-yapısı",
+    "title": "1. Veri Toplama Disiplini",
+    "section": "1.7 Excel Dosyası Yapısı",
+    "text": "1.7 Excel Dosyası Yapısı\n\n\n\n\n\n\nNotİdeal Excel dosyası\n\n\n\n\nTek sayfa (worksheet) — eğer çoklu sayfa lazımsa: bir sayfa “veri”, bir sayfa “codebook”\nTek başlık satırı (sayfa 1, satır 1)\nBirleştirilmiş hücre yok\nRenk/biçimlendirme yok (renkleri programlar okumaz)\nToplam/özet satırı yok\nBoş satır/sütun yok (veri içinde)\nVeri başlangıcı her zaman A1 hücresinden\n\n\n\n\n❌ Tipik Yanlış Excel\n[boş]\n\"Çalışma: KOAH Olguları\"        (başlık metni)\n\"Toplayan: Dr. X\"\n[boş]\n[Birleştirilmiş hücre: HASTA BİLGİLERİ | LABORATUVAR]\n\"ad\" \"soyad\" \"yaş\" | \"WBC\" \"CRP\"\n\"Ahmet\" \"Yıl.\" \"65\" | \"8.5\" \"12\"\n...\n\"TOPLAM\" — — — — \"ortalama: 9.2\"\n\n\n✅ Doğru Excel\nhasta_id  ad     soyad    yas   wbc   crp\n1         Ahmet  Yıl.     65    8.5   12\n2         Ayşe   Kar.     58    7.2   8\n...",
+    "crumbs": [
+      "Ana Sayfa",
+      "📚 Rehber",
+      "1. Veri Toplama Disiplini"
+    ]
+  },
+  {
+    "objectID": "rehber/01-veri-toplama-disiplini.html#dosya-isimlendirme",
+    "href": "rehber/01-veri-toplama-disiplini.html#dosya-isimlendirme",
+    "title": "1. Veri Toplama Disiplini",
+    "section": "1.8 Dosya İsimlendirme",
+    "text": "1.8 Dosya İsimlendirme\nVeri dosyasının kendisi de düzenli isimlendirilmeli:\n\n\n\n\n\n\nİpucuÖnerilen dosya adı formatı\n\n\n\n&lt;projead&gt;_&lt;icerik&gt;_&lt;tarih&gt;.xlsx\nÖrnek: koah_kohort_veri_2024-11-15.xlsx\nSürüm güncellediğinizde tarihi değiştirin, eskisini silmeyin (_arsiv klasörüne taşıyın).",
+    "crumbs": [
+      "Ana Sayfa",
+      "📚 Rehber",
+      "1. Veri Toplama Disiplini"
+    ]
+  },
+  {
+    "objectID": "rehber/01-veri-toplama-disiplini.html#bu-bölümün-özeti",
+    "href": "rehber/01-veri-toplama-disiplini.html#bu-bölümün-özeti",
+    "title": "1. Veri Toplama Disiplini",
+    "section": "✅ Bu Bölümün Özeti",
+    "text": "✅ Bu Bölümün Özeti\n\nTidy data: bir satır bir gözlem, bir sütun bir değişken\nSütun adları: snake_case, Türkçe karakter yok\nEksik değer: hücreyi boş bırakın, kod yazmayın\nTarih: YYYY-AA-GG formatı\nKategoriler: tek liste belirleyin, herkes ona uysun\nKod sözlüğü tutun\nExcel dosyası: tek sayfa, tek başlık, birleştirme yok\n\nVeri toplama tamamlandıysa sıradaki bölüme geçin: 2. Sık Karşılaşılan Sorunlar →",
+    "crumbs": [
+      "Ana Sayfa",
+      "📚 Rehber",
+      "1. Veri Toplama Disiplini"
+    ]
+  }
+]

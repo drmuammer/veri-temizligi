@@ -1,0 +1,1446 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="tr" xml:lang="tr"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.9.37">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>5. Kontrol Listesi – Veri Temizliği Rehberi</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../rehber/04-r-temizlik.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-acf12a64177840b8d86f2d4f01b2e9fb.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-23bbe8b5e4efc1e257f6d59dce478b08.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-acf12a64177840b8d86f2d4f01b2e9fb.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-5feaabed66f5ac1224eebc6339d715e7.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-dark-e463fe4cac91f302a4b3b62c8a97ad20.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../site_libs/bootstrap/bootstrap-5feaabed66f5ac1224eebc6339d715e7.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "Sonuç yok",
+    "search-matching-documents-text": "eşleşen belgeler",
+    "search-copy-link-title": "Aramak için bağlantıyı kopyalayın",
+    "search-hide-matches-text": "Ek eşleşmeleri gizle",
+    "search-more-match-text": "bu belgede bir tane daha eşleşme",
+    "search-more-matches-text": "bu belgede daha fazla eşleşme",
+    "search-clear-button-title": "Temizle",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "İptal et",
+    "search-submit-button-title": "Gönder",
+    "search-label": "Ara"
+  }
+}</script>
+<style>html{ scroll-behavior: smooth; }</style>
+
+
+<link rel="stylesheet" href="../styles.css">
+</head>
+
+<body class="nav-sidebar docked nav-fixed quarto-light"><script id="quarto-html-before-body" type="application/javascript">
+    const toggleBodyColorMode = (bsSheetEl) => {
+      const mode = bsSheetEl.getAttribute("data-mode");
+      const bodyEl = window.document.querySelector("body");
+      if (mode === "dark") {
+        bodyEl.classList.add("quarto-dark");
+        bodyEl.classList.remove("quarto-light");
+      } else {
+        bodyEl.classList.add("quarto-light");
+        bodyEl.classList.remove("quarto-dark");
+      }
+    }
+    const toggleBodyColorPrimary = () => {
+      const bsSheetEl = window.document.querySelector("link#quarto-bootstrap:not([rel=disabled-stylesheet])");
+      if (bsSheetEl) {
+        toggleBodyColorMode(bsSheetEl);
+      }
+    }
+    const setColorSchemeToggle = (alternate) => {
+      const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+      for (let i=0; i < toggles.length; i++) {
+        const toggle = toggles[i];
+        if (toggle) {
+          if (alternate) {
+            toggle.classList.add("alternate");
+          } else {
+            toggle.classList.remove("alternate");
+          }
+        }
+      }
+    };
+    const toggleColorMode = (alternate) => {
+      // Switch the stylesheets
+      const primaryStylesheets = window.document.querySelectorAll('link.quarto-color-scheme:not(.quarto-color-alternate)');
+      const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+      manageTransitions('#quarto-margin-sidebar .nav-link', false);
+      if (alternate) {
+        // note: dark is layered on light, we don't disable primary!
+        enableStylesheet(alternateStylesheets);
+        for (const sheetNode of alternateStylesheets) {
+          if (sheetNode.id === "quarto-bootstrap") {
+            toggleBodyColorMode(sheetNode);
+          }
+        }
+      } else {
+        disableStylesheet(alternateStylesheets);
+        enableStylesheet(primaryStylesheets)
+        toggleBodyColorPrimary();
+      }
+      manageTransitions('#quarto-margin-sidebar .nav-link', true);
+      // Switch the toggles
+      setColorSchemeToggle(alternate)
+      // Hack to workaround the fact that safari doesn't
+      // properly recolor the scrollbar when toggling (#1455)
+      if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+        manageTransitions("body", false);
+        window.scrollTo(0, 1);
+        setTimeout(() => {
+          window.scrollTo(0, 0);
+          manageTransitions("body", true);
+        }, 40);
+      }
+    }
+    const disableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        stylesheet.rel = 'disabled-stylesheet';
+      }
+    }
+    const enableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        if(stylesheet.rel !== 'stylesheet') { // for Chrome, which will still FOUC without this check
+          stylesheet.rel = 'stylesheet';
+        }
+      }
+    }
+    const manageTransitions = (selector, allowTransitions) => {
+      const els = window.document.querySelectorAll(selector);
+      for (let i=0; i < els.length; i++) {
+        const el = els[i];
+        if (allowTransitions) {
+          el.classList.remove('notransition');
+        } else {
+          el.classList.add('notransition');
+        }
+      }
+    }
+    const isFileUrl = () => {
+      return window.location.protocol === 'file:';
+    }
+    const hasAlternateSentinel = () => {
+      let styleSentinel = getColorSchemeSentinel();
+      if (styleSentinel !== null) {
+        return styleSentinel === "alternate";
+      } else {
+        return false;
+      }
+    }
+    const setStyleSentinel = (alternate) => {
+      const value = alternate ? "alternate" : "default";
+      if (!isFileUrl()) {
+        window.localStorage.setItem("quarto-color-scheme", value);
+      } else {
+        localAlternateSentinel = value;
+      }
+    }
+    const getColorSchemeSentinel = () => {
+      if (!isFileUrl()) {
+        const storageValue = window.localStorage.getItem("quarto-color-scheme");
+        return storageValue != null ? storageValue : localAlternateSentinel;
+      } else {
+        return localAlternateSentinel;
+      }
+    }
+    const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+      const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+      const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+      let newTheme = '';
+      if(authorPrefersDark) {
+        newTheme = isAlternate ? baseTheme : alternateTheme;
+      } else {
+        newTheme = isAlternate ? alternateTheme : baseTheme;
+      }
+      const changeGiscusTheme = () => {
+        // From: https://github.com/giscus/giscus/issues/336
+        const sendMessage = (message) => {
+          const iframe = document.querySelector('iframe.giscus-frame');
+          if (!iframe) return;
+          iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+        }
+        sendMessage({
+          setConfig: {
+            theme: newTheme
+          }
+        });
+      }
+      const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+      if (isGiscussLoaded) {
+        changeGiscusTheme();
+      }
+    };
+    const authorPrefersDark = false;
+    const darkModeDefault = authorPrefersDark;
+      document.querySelector('link#quarto-text-highlighting-styles.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+      document.querySelector('link#quarto-bootstrap.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+    let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+    // Dark / light mode switch
+    window.quartoToggleColorScheme = () => {
+      // Read the current dark / light value
+      let toAlternate = !hasAlternateSentinel();
+      toggleColorMode(toAlternate);
+      setStyleSentinel(toAlternate);
+      toggleGiscusIfUsed(toAlternate, darkModeDefault);
+      window.dispatchEvent(new Event('resize'));
+    };
+    // Switch to dark mode if need be
+    if (hasAlternateSentinel()) {
+      toggleColorMode(true);
+    } else {
+      toggleColorMode(false);
+    }
+  </script>
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">🧹 Veri Temizliği</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Ara"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Gezinmeyi değiştir" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link active" href="../index.html" aria-current="page"> 
+<span class="menu-text">Ana Sayfa</span></a>
+  </li>  
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-rehber" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Rehber</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-rehber">    
+        <li>
+    <a class="dropdown-item" href="../rehber/01-veri-toplama-disiplini.html">
+ <span class="dropdown-text">1. Veri Toplama Disiplini</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../rehber/02-sik-sorunlar.html">
+ <span class="dropdown-text">2. Sık Karşılaşılan Sorunlar</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../rehber/03-openrefine-rehberi.html">
+ <span class="dropdown-text">3. OpenRefine Rehberi</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../rehber/04-r-temizlik.html">
+ <span class="dropdown-text">4. R ile Temizlik</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../rehber/05-kontrol-listesi.html">
+ <span class="dropdown-text">5. Kontrol Listesi</span></a>
+  </li>  
+    </ul>
+  </li>
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/drmuammer/veri-temizligi"> <i class="bi bi-github" role="img" aria-label="GitHub">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://muammerbeslen.com"> <i class="bi bi-house" role="img" aria-label="Website">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Karanlık modu değiştir"><i class="bi"></i></a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Kenar çubuğunu değiştir" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../rehber/01-veri-toplama-disiplini.html">📚 Rehber</a></li><li class="breadcrumb-item"><a href="../rehber/05-kontrol-listesi.html">5. Kontrol Listesi</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Kenar çubuğunu değiştir" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Ara" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Ara"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">🏠 Ana Sayfa</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">📚 Rehber</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Bölümü değiştir">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../rehber/01-veri-toplama-disiplini.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">1. Veri Toplama Disiplini</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../rehber/02-sik-sorunlar.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">2. Sık Karşılaşılan Sorunlar</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../rehber/03-openrefine-rehberi.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">3. OpenRefine Rehberi</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../rehber/04-r-temizlik.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">4. R ile Temizlik</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../rehber/05-kontrol-listesi.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">5. Kontrol Listesi</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">İçindekiler</h2>
+   
+  <ul>
+  <li><a href="#bu-liste-neden-önemli" id="toc-bu-liste-neden-önemli" class="nav-link active" data-scroll-target="#bu-liste-neden-önemli">Bu Liste Neden Önemli?</a></li>
+  <li><a href="#kontrol-listesi" id="toc-kontrol-listesi" class="nav-link" data-scroll-target="#kontrol-listesi">✅ Kontrol Listesi</a>
+  <ul class="collapse">
+  <li><a href="#bölüm-a-dosya-yapısı" id="toc-bölüm-a-dosya-yapısı" class="nav-link" data-scroll-target="#bölüm-a-dosya-yapısı">📐 Bölüm A: Dosya Yapısı</a></li>
+  <li><a href="#bölüm-b-sütun-adları" id="toc-bölüm-b-sütun-adları" class="nav-link" data-scroll-target="#bölüm-b-sütun-adları">🏷️ Bölüm B: Sütun Adları</a></li>
+  <li><a href="#bölüm-c-tarih-sütunları" id="toc-bölüm-c-tarih-sütunları" class="nav-link" data-scroll-target="#bölüm-c-tarih-sütunları">📅 Bölüm C: Tarih Sütunları</a></li>
+  <li><a href="#bölüm-d-sayısal-sütunlar" id="toc-bölüm-d-sayısal-sütunlar" class="nav-link" data-scroll-target="#bölüm-d-sayısal-sütunlar">🔢 Bölüm D: Sayısal Sütunlar</a></li>
+  <li><a href="#bölüm-e-kategorik-sütunlar" id="toc-bölüm-e-kategorik-sütunlar" class="nav-link" data-scroll-target="#bölüm-e-kategorik-sütunlar">🏷️ Bölüm E: Kategorik Sütunlar</a></li>
+  <li><a href="#bölüm-f-eksik-değerler" id="toc-bölüm-f-eksik-değerler" class="nav-link" data-scroll-target="#bölüm-f-eksik-değerler">❓ Bölüm F: Eksik Değerler</a></li>
+  <li><a href="#bölüm-g-duplikatlar" id="toc-bölüm-g-duplikatlar" class="nav-link" data-scroll-target="#bölüm-g-duplikatlar">🔁 Bölüm G: Duplikatlar</a></li>
+  <li><a href="#bölüm-h-codebook-kod-sözlüğü" id="toc-bölüm-h-codebook-kod-sözlüğü" class="nav-link" data-scroll-target="#bölüm-h-codebook-kod-sözlüğü">📋 Bölüm H: Codebook (Kod Sözlüğü)</a></li>
+  <li><a href="#bölüm-i-dosya-bilgileri" id="toc-bölüm-i-dosya-bilgileri" class="nav-link" data-scroll-target="#bölüm-i-dosya-bilgileri">📁 Bölüm I: Dosya Bilgileri</a></li>
+  <li><a href="#bölüm-j-analiz-hazırlığı" id="toc-bölüm-j-analiz-hazırlığı" class="nav-link" data-scroll-target="#bölüm-j-analiz-hazırlığı">🎯 Bölüm J: Analiz Hazırlığı</a></li>
+  </ul></li>
+  <li><a href="#hızlı-skor" id="toc-hızlı-skor" class="nav-link" data-scroll-target="#hızlı-skor">🎁 Hızlı Skor</a></li>
+  <li><a href="#veri-göndermeden-önce-son-adım" id="toc-veri-göndermeden-önce-son-adım" class="nav-link" data-scroll-target="#veri-göndermeden-önce-son-adım">📤 Veri Göndermeden Önce Son Adım</a></li>
+  <li><a href="#bitti" id="toc-bitti" class="nav-link" data-scroll-target="#bitti">✅ Bitti!</a></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/drmuammer/veri-temizligi/edit/main/rehber/05-kontrol-listesi.qmd" class="toc-action"><i class="bi bi-github"></i>Bu sayfayı düzenle</a></li><li><a href="https://github.com/drmuammer/veri-temizligi/issues/new" class="toc-action"><i class="bi empty"></i>Sorun bildir</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../rehber/01-veri-toplama-disiplini.html">📚 Rehber</a></li><li class="breadcrumb-item"><a href="../rehber/05-kontrol-listesi.html">5. Kontrol Listesi</a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title">5. Kontrol Listesi</h1>
+<p class="subtitle lead">İstatistikçinize göndermeden önce verinizin geçmesi gereken sınav</p>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="bu-liste-neden-önemli" class="level2">
+<h2 class="anchored" data-anchor-id="bu-liste-neden-önemli">Bu Liste Neden Önemli?</h2>
+<p>Bu rehberin en pratik parçası burası. Verinizi bana ya da başka bir biyoistatistikçiye göndermeden önce, <strong>bu listenin tamamını</strong> geçmesi gerekir. Aksi halde geri dönecektir.</p>
+<p>Bu sayfayı <strong>yazdırın</strong> ya da <strong>ayrı pencerede açın</strong>, dosyanızı yanına koyun, tek tek kontrol edin.</p>
+</section>
+<section id="kontrol-listesi" class="level2">
+<h2 class="anchored" data-anchor-id="kontrol-listesi">✅ Kontrol Listesi</h2>
+<section id="bölüm-a-dosya-yapısı" class="level3">
+<h3 class="anchored" data-anchor-id="bölüm-a-dosya-yapısı">📐 Bölüm A: Dosya Yapısı</h3>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Not</span>A.1 — Tek Çalışma Sayfası mı?
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Dosyanızda yalnızca <strong>1 sayfa veri</strong> olmalı. Birden fazla sayfa varsa: hangisi gerçek veri, hangisi codebook, hangisi notlar — net olmalı. Hiçbiri gereksiz olmamalı.</p>
+<ul class="task-list">
+<li><label><input type="checkbox">Veri sayfası tek ve net</label></li>
+<li><label><input type="checkbox">Codebook ayrı sayfada (varsa)</label></li>
+<li><label><input type="checkbox">Gereksiz “Sayfa1”, “Notlarım” türü sekmeler silinmiş</label></li>
+</ul>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Not</span>A.2 — Veri A1 Hücresinden mi Başlıyor?
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Veri tablosu <strong>A1 hücresinden</strong> başlamalı. Üstte başlık metni, açıklama, logo olmamalı.</p>
+<ul class="task-list">
+<li><label><input type="checkbox">A1 hücresi: ilk sütun başlığı</label></li>
+<li><label><input type="checkbox">B1 hücresi: ikinci sütun başlığı</label></li>
+<li><label><input type="checkbox">2. satırdan itibaren: gerçek veri</label></li>
+</ul>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Not</span>A.3 — Birleştirilmiş Hücre Yok
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Hiçbir yerde birleştirilmiş hücre <strong>olmamalı</strong>. Başlıkta da, veride de.</p>
+<p><strong>Kontrol:</strong> Tüm tabloyu seç → sağ tık → <strong>Hücreleri Biçimlendir</strong> → <strong>Hizalama</strong> → “Hücreleri birleştir” kutusu <strong>boş olmalı</strong>.</p>
+<ul class="task-list">
+<li><label><input type="checkbox">Sütun başlıklarında birleşim yok</label></li>
+<li><label><input type="checkbox">Veri içinde birleşim yok</label></li>
+</ul>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Not</span>A.4 — Boş Satır/Sütun Yok (Veri İçinde)
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Tablonun ortasında boş satır olmamalı. Boş satır verinin bittiği anlamına gelir, programlar oradan sonrasını okumayabilir.</p>
+<ul class="task-list">
+<li><label><input type="checkbox">Veri içinde tamamen boş satır yok</label></li>
+<li><label><input type="checkbox">Veri içinde tamamen boş sütun yok</label></li>
+</ul>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Not</span>A.5 — Toplam/Özet Satırı Yok
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Tablonun en altında “TOPLAM”, “ORTALAMA”, “Genel” gibi özet satırları olmamalı.</p>
+<ul class="task-list">
+<li><label><input type="checkbox">Toplam satırı silinmiş</label></li>
+<li><label><input type="checkbox">Ortalama satırı silinmiş</label></li>
+<li><label><input type="checkbox">Sayfanın altında not/yorum yok</label></li>
+</ul>
+</div>
+</div>
+</section>
+<section id="bölüm-b-sütun-adları" class="level3">
+<h3 class="anchored" data-anchor-id="bölüm-b-sütun-adları">🏷️ Bölüm B: Sütun Adları</h3>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Not</span>B.1 — Tek Satır Başlık
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Sütun başlıkları <strong>tek satırda</strong> (1. satır). İki satıra yayılmış başlık yok.</p>
+<ul class="task-list">
+<li><label><input type="checkbox">1. satırda tüm başlıklar var</label></li>
+<li><label><input type="checkbox">2. satırdan veri başlıyor</label></li>
+</ul>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Not</span>B.2 — Başlıklarda Sorun Yok
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Her başlık için kontrol:</p>
+<ul class="task-list">
+<li><label><input type="checkbox">Türkçe karakter yok (ğ, ü, ş, ı, ö, ç değil)</label></li>
+<li><label><input type="checkbox">Boşluk yerine <code>_</code> (alt çizgi) kullanılmış</label></li>
+<li><label><input type="checkbox">Hepsi küçük harf</label></li>
+<li><label><input type="checkbox">Özel karakter yok (?, !, %, *, /, vb.)</label></li>
+<li><label><input type="checkbox">Rakamla başlamıyor (<code>yas_yil</code> evet, <code>1_olcum</code> hayır)</label></li>
+<li><label><input type="checkbox">Anlamlı (kısaltma yapılacaksa codebook’ta açıklanmış)</label></li>
+</ul>
+<p>✅ İyi örnekler: <code>hasta_id</code>, <code>yas_yil</code>, <code>bmi</code>, <code>tansiyon_sistolik</code>, <code>dogum_tarihi</code> ❌ Kötü örnekler: <code>Yaş(yıl)</code>, <code>Tansiyon-Sistolik</code>, <code>1.Ölçüm</code>, <code>Cinsiyet (E/K)</code></p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Not</span>B.3 — Sütun Adları Benzersiz
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Aynı isimde iki sütun yok.</p>
+<ul class="task-list">
+<li><label><input type="checkbox">Tüm sütun adları farklı</label></li>
+</ul>
+</div>
+</div>
+</section>
+<section id="bölüm-c-tarih-sütunları" class="level3">
+<h3 class="anchored" data-anchor-id="bölüm-c-tarih-sütunları">📅 Bölüm C: Tarih Sütunları</h3>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Not</span>C.1 — Tek Format
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Tüm tarih sütunlarında <strong>tek format</strong>: <code>YYYY-AA-GG</code> (örn. <code>2024-03-15</code>).</p>
+<p><strong>Kontrol:</strong> Tarih sütununu üstten alta gözle tarayın. Tutarsız format varsa düzeltin.</p>
+<ul class="task-list">
+<li><label><input type="checkbox"><code>dogum_tarihi</code> sütunu tek format</label></li>
+<li><label><input type="checkbox"><code>yatis_tarihi</code> sütunu tek format</label></li>
+<li><label><input type="checkbox"><code>cikis_tarihi</code> sütunu tek format</label></li>
+<li><label><input type="checkbox">(diğer tarih sütunları) tek format</label></li>
+</ul>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Not</span>C.2 — Tarih Sütunu Hücre Biçimi “Tarih”
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Excel’de tarih sütununu seçin → sağ tık → <strong>Hücreleri Biçimlendir</strong> → kategori “<strong>Tarih</strong>” olmalı, “Metin” değil.</p>
+<ul class="task-list">
+<li><label><input type="checkbox">Hücre biçimi “Tarih” olarak ayarlı</label></li>
+</ul>
+</div>
+</div>
+</section>
+<section id="bölüm-d-sayısal-sütunlar" class="level3">
+<h3 class="anchored" data-anchor-id="bölüm-d-sayısal-sütunlar">🔢 Bölüm D: Sayısal Sütunlar</h3>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Not</span>D.1 — Sayı Yalnızca Sayı
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Sayısal olması gereken sütunlarda metin olmamalı.</p>
+<p>❌ Kötü:<br>
+<code>170</code>, <code>1.75 m</code>, <code>170 cm</code>, <code>yaklaşık 170</code>, <code>&gt;200</code>, <code>&lt;50</code></p>
+<p>✅ İyi:<br>
+<code>170</code>, <code>175</code>, <code>170</code>, <code>170</code>, (boş), (boş)</p>
+<ul class="task-list">
+<li><label><input type="checkbox"><code>yas</code> sütunu yalnızca sayı</label></li>
+<li><label><input type="checkbox"><code>boy_cm</code> sütunu yalnızca sayı (cm yazmadan)</label></li>
+<li><label><input type="checkbox"><code>agirlik_kg</code> sütunu yalnızca sayı</label></li>
+<li><label><input type="checkbox">(diğer sayısal sütunlar) yalnızca sayı</label></li>
+</ul>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Not</span>D.2 — Birim Tutarlılığı
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Bir sütundaki tüm değerler <strong>aynı birimde</strong>.</p>
+<ul class="task-list">
+<li><label><input type="checkbox">Boy hep cm olarak (m karışmıyor)</label></li>
+<li><label><input type="checkbox">Ağırlık hep kg olarak</label></li>
+<li><label><input type="checkbox">Süreler hep aynı birimde (gün/ay/yıl karışmıyor)</label></li>
+<li><label><input type="checkbox">Laboratuvar değerleri aynı birimde</label></li>
+</ul>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Not</span>D.3 — Ondalık Ayraç Tutarlılığı
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Excel’in TR sürümü ondalık ayraç olarak <strong>virgül</strong> kullanır (<code>1,75</code>); ama R/SPSS gibi programlar <strong>nokta</strong> bekler (<code>1.75</code>).</p>
+<p><strong>Çözüm:</strong> Çıktıyı CSV olarak vermeden önce TR Excel’de ayarları değiştirin ya da çıktı sırasında “Decimal: .” seçin.</p>
+<ul class="task-list">
+<li><label><input type="checkbox">Ondalık ayraç tutarlı (hep virgül ya da hep nokta)</label></li>
+</ul>
+</div>
+</div>
+</section>
+<section id="bölüm-e-kategorik-sütunlar" class="level3">
+<h3 class="anchored" data-anchor-id="bölüm-e-kategorik-sütunlar">🏷️ Bölüm E: Kategorik Sütunlar</h3>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Not</span>E.1 — Tutarlı Yazım
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Aynı kategori farklı şekillerde yazılmamış.</p>
+<p><strong>Kontrol:</strong> Excel’de filtre ekle (Veri → Filtre), her kategorik sütunda dropdown’a bak. Aynı şeyin farklı yazımları varsa birleştir.</p>
+<ul class="task-list">
+<li><label><input type="checkbox">Cinsiyet: yalnızca <code>Erkek</code> ve <code>Kadın</code> (varyant yok)</label></li>
+<li><label><input type="checkbox">Eğitim: tutarlı kategoriler</label></li>
+<li><label><input type="checkbox">Medeni durum: tutarlı kategoriler</label></li>
+<li><label><input type="checkbox">Diğer kategorik sütunlar: tutarlı</label></li>
+</ul>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Not</span>E.2 — Boşluk Sorunu Yok
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Görünmez boşluklar (başta/sonda) sebebiyle aynı değer farklı sayılmıyor.</p>
+<p><strong>Kontrol:</strong> Excel’de <code>=TRIM(A2)</code> formülünü her metin sütununa uygulayın, sonra <strong>Özel Yapıştır → Yalnızca Değer</strong> ile orijinali güncelleyin.</p>
+<ul class="task-list">
+<li><label><input type="checkbox">Tüm metin sütunlarında TRIM uygulanmış</label></li>
+</ul>
+</div>
+</div>
+</section>
+<section id="bölüm-f-eksik-değerler" class="level3">
+<h3 class="anchored" data-anchor-id="bölüm-f-eksik-değerler">❓ Bölüm F: Eksik Değerler</h3>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Not</span>F.1 — Boş Hücre = Eksik
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Eksik değer için hücre <strong>boş bırakılmış</strong>, başka bir şey yazılmamış.</p>
+<ul class="task-list">
+<li><label><input type="checkbox">“yok” yazılmamış → boş</label></li>
+<li><label><input type="checkbox">“-” yazılmamış → boş</label></li>
+<li><label><input type="checkbox">“NA”, “?” yazılmamış → boş</label></li>
+<li><label><input type="checkbox">“999”, “888” gibi sahte kodlar yok</label></li>
+</ul>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Not</span>F.2 — “0” ve “Eksik” Karışmamış
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Önemli:</strong> Sayısal sütunda <code>0</code>, “ölçüm 0” anlamına gelir, “ölçüm yapılmadı” anlamına gelmez.</p>
+<p>Örnek: Sigara paket-yılı için <code>0</code> “hiç içmemiş”; eksik ise hücre boş olmalı.</p>
+<ul class="task-list">
+<li><label><input type="checkbox">0 değeri yalnızca gerçek 0 anlamında</label></li>
+<li><label><input type="checkbox">Belirsiz sıfırlar boş bırakılmış ya da netleştirilmiş</label></li>
+</ul>
+</div>
+</div>
+</section>
+<section id="bölüm-g-duplikatlar" class="level3">
+<h3 class="anchored" data-anchor-id="bölüm-g-duplikatlar">🔁 Bölüm G: Duplikatlar</h3>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Not</span>G.1 — Tam Duplikat Yok
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Hiçbir satır birebir aynı diğer satırla olmamalı.</p>
+<p><strong>Kontrol:</strong> Excel’de <strong>Veri → Yinelenenleri Kaldır</strong> kullan. Önce yedek al, sonra çalıştır.</p>
+<ul class="task-list">
+<li><label><input type="checkbox">Tam duplikat yok (Excel “Yinelenenleri Kaldır” temiz dedi)</label></li>
+</ul>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Not</span>G.2 — Kısmi Duplikat Yok
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Aynı hasta, farklı satırlarda farklı bilgilerle iki kere girilmemiş.</p>
+<p><strong>Kontrol:</strong> <code>hasta_id</code>, <code>ad+soyad+dogum_tarihi</code> kombinasyonlarına göre filtre uygulayıp ara.</p>
+<ul class="task-list">
+<li><label><input type="checkbox">Aynı hasta birden fazla satırda yok (uzun format zaten ise gözleme bazlı duplikat yok)</label></li>
+</ul>
+</div>
+</div>
+</section>
+<section id="bölüm-h-codebook-kod-sözlüğü" class="level3">
+<h3 class="anchored" data-anchor-id="bölüm-h-codebook-kod-sözlüğü">📋 Bölüm H: Codebook (Kod Sözlüğü)</h3>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Not</span>H.1 — Codebook Var
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Veriyi gönderdiğinizde, alıcı her sütunda <strong>ne olduğunu</strong> anlayabilmeli.</p>
+<p>Aynı Excel dosyasında ayrı bir sayfada veya yan dosya olarak <strong>codebook</strong> ekleyin. Şunlar olmalı:</p>
+<ul>
+<li><p>Sütun adı</p></li>
+<li><p>Veri tipi (sayısal, metin, tarih, kategorik)</p></li>
+<li><p>Birim (cm, kg, mmHg, vb.)</p></li>
+<li><p>Açıklama</p></li>
+<li><p>Geçerli değer aralığı / kategori listesi</p></li>
+<li><p><label><input type="checkbox">Codebook hazırlanmış</label></p></li>
+<li><p><label><input type="checkbox">Her sütun için açıklama var</label></p></li>
+<li><p><label><input type="checkbox">Birimler belirtilmiş</label></p></li>
+<li><p><label><input type="checkbox">Kategoriler için olası değerler listelenmiş</label></p></li>
+</ul>
+</div>
+</div>
+</section>
+<section id="bölüm-i-dosya-bilgileri" class="level3">
+<h3 class="anchored" data-anchor-id="bölüm-i-dosya-bilgileri">📁 Bölüm I: Dosya Bilgileri</h3>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Not</span>I.1 — Dosya Adı Anlamlı
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Dosyanın adı, ne içerdiğini anlatmalı.</p>
+<p>✅ İyi: <code>koah_kohort_veri_2024-11-15.xlsx</code><br>
+❌ Kötü: <code>dosya1.xlsx</code>, <code>Yeni Belge.xlsx</code>, <code>son hali (2).xlsx</code></p>
+<ul class="task-list">
+<li><label><input type="checkbox">Dosya adı projeyi/içeriği belirtir</label></li>
+<li><label><input type="checkbox">Tarih var (sürüm karışıklığı önler)</label></li>
+<li><label><input type="checkbox">Türkçe karakter ve boşluk yok</label></li>
+</ul>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Not</span>I.2 — Sürüm Kontrolü
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Daha önceki sürümleri silmemiş, ama doğru sürümü göndermek için ad düzenli olmalı.</p>
+<ul class="task-list">
+<li><label><input type="checkbox">Hangi dosyanın güncel olduğu belli</label></li>
+<li><label><input type="checkbox">Eskiler <code>_arsiv</code> klasörüne taşınmış</label></li>
+</ul>
+</div>
+</div>
+</section>
+<section id="bölüm-j-analiz-hazırlığı" class="level3">
+<h3 class="anchored" data-anchor-id="bölüm-j-analiz-hazırlığı">🎯 Bölüm J: Analiz Hazırlığı</h3>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Not</span>J.1 — Araştırma Sorusu Net
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Bu sütunlar hangi analiz için kullanılacak? Belli bir hipoteziniz var mı?</p>
+<ul class="task-list">
+<li><label><input type="checkbox">Birincil sonlanım (outcome) belirlenmiş</label></li>
+<li><label><input type="checkbox">Birincil maruziyet (exposure) belirlenmiş</label></li>
+<li><label><input type="checkbox">Karıştırıcı (confounder) düşünülmüş</label></li>
+<li><label><input type="checkbox">Hangi analiz yapılacak (regresyon, sağkalım, vb.) belli</label></li>
+</ul>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Not</span>J.2 — Etik Onay
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Veri toplama etik kurul onaylı mı?</p>
+<ul class="task-list">
+<li><label><input type="checkbox">Etik kurul onayı var</label></li>
+<li><label><input type="checkbox">Onay kodu / referansı paylaşılabilir</label></li>
+<li><label><input type="checkbox">Hasta onamı alınmış (gerekiyorsa)</label></li>
+</ul>
+</div>
+</div>
+</section>
+</section>
+<section id="hızlı-skor" class="level2">
+<h2 class="anchored" data-anchor-id="hızlı-skor">🎁 Hızlı Skor</h2>
+<p>Her kontrol kutucuğu 1 puan. Toplam <strong>42 kontrol</strong>.</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Skor</th>
+<th>Yorum</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>42/42</td>
+<td>🎉 Mükemmel! Veriniz hazır, gönderebilirsiniz.</td>
+</tr>
+<tr class="even">
+<td>38-41</td>
+<td>✅ İyi. Eksikleri tamamlayıp gönderin.</td>
+</tr>
+<tr class="odd">
+<td>30-37</td>
+<td>⚠️ Orta. Eksikler analizde sorun çıkarır, lütfen halledin.</td>
+</tr>
+<tr class="even">
+<td>&lt;30</td>
+<td>❌ Veri henüz hazır değil. Rehberin başına dönün.</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="veri-göndermeden-önce-son-adım" class="level2">
+<h2 class="anchored" data-anchor-id="veri-göndermeden-önce-son-adım">📤 Veri Göndermeden Önce Son Adım</h2>
+<p>Verinizi gönderirken e-postaya/mesaja ekleyin:</p>
+<pre><code>Konu: [Proje adı] — Veri Analiz Talebi
+
+Sayın [İstatistikçi],
+
+[Proje adı] çalışmasının verilerini analiz için ekte gönderiyorum.
+
+Çalışma özeti:
+- Tasarım: [örn. retrospektif kohort]
+- Örneklem: [örn. n=312 KOAH hastası]
+- Birincil soru: [örn. "Geç vs erken NIV başlama mortaliteyi etkiler mi"]
+
+Veri kontrol durumu:
+- ✅ "Veri Temizliği Rehberi" kontrol listesi: 41/42 (J.1 düşünme aşamasında)
+- ✅ Codebook ekte
+- ✅ Etik onay kodu: [kod]
+
+Sorularınız için müsaitim.
+
+Saygılarımla,
+[Adınız]</code></pre>
+<p>Bu mesaj formatı işinizi <strong>çok hızlandıracak</strong>. İstatistikçi 30 saniyede sorunun ne olduğunu, verinin ne kadar hazır olduğunu anlayacak.</p>
+</section>
+<section id="bitti" class="level2">
+<h2 class="anchored" data-anchor-id="bitti">✅ Bitti!</h2>
+<p>Bu rehberi takip ederek <strong>istatistik analiz öncesi en sık karşılaşılan tüm sorunları</strong> çözmüş olursunuz.</p>
+<p>Sorunuz veya geri bildiriminiz için: <a href="https://github.com/drmuammer/veri-temizligi/issues">GitHub Issues</a></p>
+<p>Başarılar! 🎯</p>
+
+
+</section>
+
+<a onclick="window.scrollTo(0, 0); return false;" role="button" id="quarto-back-to-top"><i class="bi bi-arrow-up"></i> Başa dön</a></main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    // Ensure there is a toggle, if there isn't float one in the top right
+    if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+      const a = window.document.createElement('a');
+      a.classList.add('top-right');
+      a.classList.add('quarto-color-scheme-toggle');
+      a.href = "";
+      a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+      const i = window.document.createElement("i");
+      i.classList.add('bi');
+      a.appendChild(i);
+      window.document.body.appendChild(a);
+    }
+    setColorSchemeToggle(hasAlternateSentinel())
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Kopyalandı");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Kopyalandı");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/drmuammer\.github\.io\/veri-temizligi\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+            // target, if specified
+            link.setAttribute("target", "_blank");
+            if (link.getAttribute("rel") === null) {
+              link.setAttribute("rel", "noopener");
+            }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../rehber/04-r-temizlik.html" class="pagination-link" aria-label="4. R ile Temizlik">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">4. R ile Temizlik</span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+  </div>
+</nav>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+<p>© 2026 Muammer Beslen, MD · <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a></p>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    <div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/drmuammer/veri-temizligi/edit/main/rehber/05-kontrol-listesi.qmd" class="toc-action"><i class="bi bi-github"></i>Bu sayfayı düzenle</a></li><li><a href="https://github.com/drmuammer/veri-temizligi/issues/new" class="toc-action"><i class="bi empty"></i>Sorun bildir</a></li></ul></div></div>
+    <div class="nav-footer-right">
+      <ul class="footer-items list-unstyled">
+    <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/drmuammer/veri-temizligi">
+      <i class="bi bi-github" role="img">
+</i> 
+    </a>
+  </li>  
+    <li class="nav-item">
+    <a class="nav-link" href="https://muammerbeslen.com">
+<p>muammerbeslen.com</p>
+</a>
+  </li>  
+</ul>
+    </div>
+  </div>
+</footer>
+
+
+
+
+<script src="../site_libs/quarto-html/zenscroll-min.js"></script>
+</body></html>
