@@ -1,0 +1,326 @@
+---
+title: "5. Kontrol Listesi"
+subtitle: "İstatistikçinize göndermeden önce verinizin geçmesi gereken sınav"
+---
+
+## Bu Liste Neden Önemli?
+
+Bu rehberin en pratik parçası burası. Verinizi bana ya da başka bir biyoistatistikçiye göndermeden önce, **bu listenin tamamını** geçmesi gerekir. Aksi halde geri dönecektir.
+
+Bu sayfayı **yazdırın** ya da **ayrı pencerede açın**, dosyanızı yanına koyun, tek tek kontrol edin.
+
+## ✅ Kontrol Listesi
+
+### 📐 Bölüm A: Dosya Yapısı
+
+::: {.callout-note}
+## A.1 — Tek Çalışma Sayfası mı?
+Dosyanızda yalnızca **1 sayfa veri** olmalı. Birden fazla sayfa varsa: hangisi gerçek veri, hangisi codebook, hangisi notlar — net olmalı. Hiçbiri gereksiz olmamalı.
+
+- [ ] Veri sayfası tek ve net
+- [ ] Codebook ayrı sayfada (varsa)
+- [ ] Gereksiz "Sayfa1", "Notlarım" türü sekmeler silinmiş
+:::
+
+::: {.callout-note}
+## A.2 — Veri A1 Hücresinden mi Başlıyor?
+Veri tablosu **A1 hücresinden** başlamalı. Üstte başlık metni, açıklama, logo olmamalı.
+
+- [ ] A1 hücresi: ilk sütun başlığı
+- [ ] B1 hücresi: ikinci sütun başlığı
+- [ ] 2. satırdan itibaren: gerçek veri
+:::
+
+::: {.callout-note}
+## A.3 — Birleştirilmiş Hücre Yok
+Hiçbir yerde birleştirilmiş hücre **olmamalı**. Başlıkta da, veride de.
+
+**Kontrol:** Tüm tabloyu seç → sağ tık → **Hücreleri Biçimlendir** → **Hizalama** → "Hücreleri birleştir" kutusu **boş olmalı**.
+
+- [ ] Sütun başlıklarında birleşim yok
+- [ ] Veri içinde birleşim yok
+:::
+
+::: {.callout-note}
+## A.4 — Boş Satır/Sütun Yok (Veri İçinde)
+Tablonun ortasında boş satır olmamalı. Boş satır verinin bittiği anlamına gelir, programlar oradan sonrasını okumayabilir.
+
+- [ ] Veri içinde tamamen boş satır yok
+- [ ] Veri içinde tamamen boş sütun yok
+:::
+
+::: {.callout-note}
+## A.5 — Toplam/Özet Satırı Yok
+Tablonun en altında "TOPLAM", "ORTALAMA", "Genel" gibi özet satırları olmamalı.
+
+- [ ] Toplam satırı silinmiş
+- [ ] Ortalama satırı silinmiş
+- [ ] Sayfanın altında not/yorum yok
+:::
+
+### 🏷️ Bölüm B: Sütun Adları
+
+::: {.callout-note}
+## B.1 — Tek Satır Başlık
+Sütun başlıkları **tek satırda** (1. satır). İki satıra yayılmış başlık yok.
+
+- [ ] 1. satırda tüm başlıklar var
+- [ ] 2. satırdan veri başlıyor
+:::
+
+::: {.callout-note}
+## B.2 — Başlıklarda Sorun Yok
+
+Her başlık için kontrol:
+
+- [ ] Türkçe karakter yok (ğ, ü, ş, ı, ö, ç değil)
+- [ ] Boşluk yerine `_` (alt çizgi) kullanılmış
+- [ ] Hepsi küçük harf
+- [ ] Özel karakter yok (?, !, %, *, /, vb.)
+- [ ] Rakamla başlamıyor (`yas_yil` evet, `1_olcum` hayır)
+- [ ] Anlamlı (kısaltma yapılacaksa codebook'ta açıklanmış)
+
+✅ İyi örnekler: `hasta_id`, `yas_yil`, `bmi`, `tansiyon_sistolik`, `dogum_tarihi`
+❌ Kötü örnekler: `Yaş(yıl)`, `Tansiyon-Sistolik`, `1.Ölçüm`, `Cinsiyet (E/K)`
+:::
+
+::: {.callout-note}
+## B.3 — Sütun Adları Benzersiz
+Aynı isimde iki sütun yok.
+
+- [ ] Tüm sütun adları farklı
+:::
+
+### 📅 Bölüm C: Tarih Sütunları
+
+::: {.callout-note}
+## C.1 — Tek Format
+Tüm tarih sütunlarında **tek format**: `YYYY-AA-GG` (örn. `2024-03-15`).
+
+**Kontrol:** Tarih sütununu üstten alta gözle tarayın. Tutarsız format varsa düzeltin.
+
+- [ ] `dogum_tarihi` sütunu tek format
+- [ ] `yatis_tarihi` sütunu tek format
+- [ ] `cikis_tarihi` sütunu tek format
+- [ ] (diğer tarih sütunları) tek format
+:::
+
+::: {.callout-note}
+## C.2 — Tarih Sütunu Hücre Biçimi "Tarih"
+Excel'de tarih sütununu seçin → sağ tık → **Hücreleri Biçimlendir** → kategori "**Tarih**" olmalı, "Metin" değil.
+
+- [ ] Hücre biçimi "Tarih" olarak ayarlı
+:::
+
+### 🔢 Bölüm D: Sayısal Sütunlar
+
+::: {.callout-note}
+## D.1 — Sayı Yalnızca Sayı
+Sayısal olması gereken sütunlarda metin olmamalı.
+
+❌ Kötü:  
+`170`, `1.75 m`, `170 cm`, `yaklaşık 170`, `>200`, `<50`
+
+✅ İyi:  
+`170`, `175`, `170`, `170`, (boş), (boş)
+
+- [ ] `yas` sütunu yalnızca sayı
+- [ ] `boy_cm` sütunu yalnızca sayı (cm yazmadan)
+- [ ] `agirlik_kg` sütunu yalnızca sayı
+- [ ] (diğer sayısal sütunlar) yalnızca sayı
+:::
+
+::: {.callout-note}
+## D.2 — Birim Tutarlılığı
+Bir sütundaki tüm değerler **aynı birimde**.
+
+- [ ] Boy hep cm olarak (m karışmıyor)
+- [ ] Ağırlık hep kg olarak
+- [ ] Süreler hep aynı birimde (gün/ay/yıl karışmıyor)
+- [ ] Laboratuvar değerleri aynı birimde
+:::
+
+::: {.callout-note}
+## D.3 — Ondalık Ayraç Tutarlılığı
+Excel'in TR sürümü ondalık ayraç olarak **virgül** kullanır (`1,75`); ama R/SPSS gibi programlar **nokta** bekler (`1.75`).
+
+**Çözüm:** Çıktıyı CSV olarak vermeden önce TR Excel'de ayarları değiştirin ya da çıktı sırasında "Decimal: ."  seçin.
+
+- [ ] Ondalık ayraç tutarlı (hep virgül ya da hep nokta)
+:::
+
+### 🏷️ Bölüm E: Kategorik Sütunlar
+
+::: {.callout-note}
+## E.1 — Tutarlı Yazım
+Aynı kategori farklı şekillerde yazılmamış.
+
+**Kontrol:** Excel'de filtre ekle (Veri → Filtre), her kategorik sütunda dropdown'a bak. Aynı şeyin farklı yazımları varsa birleştir.
+
+- [ ] Cinsiyet: yalnızca `Erkek` ve `Kadın` (varyant yok)
+- [ ] Eğitim: tutarlı kategoriler
+- [ ] Medeni durum: tutarlı kategoriler
+- [ ] Diğer kategorik sütunlar: tutarlı
+:::
+
+::: {.callout-note}
+## E.2 — Boşluk Sorunu Yok
+Görünmez boşluklar (başta/sonda) sebebiyle aynı değer farklı sayılmıyor.
+
+**Kontrol:** Excel'de `=TRIM(A2)` formülünü her metin sütununa uygulayın, sonra **Özel Yapıştır → Yalnızca Değer** ile orijinali güncelleyin.
+
+- [ ] Tüm metin sütunlarında TRIM uygulanmış
+:::
+
+### ❓ Bölüm F: Eksik Değerler
+
+::: {.callout-note}
+## F.1 — Boş Hücre = Eksik
+Eksik değer için hücre **boş bırakılmış**, başka bir şey yazılmamış.
+
+- [ ] "yok" yazılmamış → boş
+- [ ] "-" yazılmamış → boş
+- [ ] "NA", "?" yazılmamış → boş
+- [ ] "999", "888" gibi sahte kodlar yok
+:::
+
+::: {.callout-note}
+## F.2 — "0" ve "Eksik" Karışmamış
+**Önemli:** Sayısal sütunda `0`, "ölçüm 0" anlamına gelir, "ölçüm yapılmadı" anlamına gelmez.
+
+Örnek: Sigara paket-yılı için `0` "hiç içmemiş"; eksik ise hücre boş olmalı.
+
+- [ ] 0 değeri yalnızca gerçek 0 anlamında
+- [ ] Belirsiz sıfırlar boş bırakılmış ya da netleştirilmiş
+:::
+
+### 🔁 Bölüm G: Duplikatlar
+
+::: {.callout-note}
+## G.1 — Tam Duplikat Yok
+Hiçbir satır birebir aynı diğer satırla olmamalı.
+
+**Kontrol:** Excel'de **Veri → Yinelenenleri Kaldır** kullan. Önce yedek al, sonra çalıştır.
+
+- [ ] Tam duplikat yok (Excel "Yinelenenleri Kaldır" temiz dedi)
+:::
+
+::: {.callout-note}
+## G.2 — Kısmi Duplikat Yok
+Aynı hasta, farklı satırlarda farklı bilgilerle iki kere girilmemiş.
+
+**Kontrol:** `hasta_id`, `ad+soyad+dogum_tarihi` kombinasyonlarına göre filtre uygulayıp ara.
+
+- [ ] Aynı hasta birden fazla satırda yok (uzun format zaten ise gözleme bazlı duplikat yok)
+:::
+
+### 📋 Bölüm H: Codebook (Kod Sözlüğü)
+
+::: {.callout-note}
+## H.1 — Codebook Var
+Veriyi gönderdiğinizde, alıcı her sütunda **ne olduğunu** anlayabilmeli.
+
+Aynı Excel dosyasında ayrı bir sayfada veya yan dosya olarak **codebook** ekleyin. Şunlar olmalı:
+
+- Sütun adı
+- Veri tipi (sayısal, metin, tarih, kategorik)
+- Birim (cm, kg, mmHg, vb.)
+- Açıklama
+- Geçerli değer aralığı / kategori listesi
+
+- [ ] Codebook hazırlanmış
+- [ ] Her sütun için açıklama var
+- [ ] Birimler belirtilmiş
+- [ ] Kategoriler için olası değerler listelenmiş
+:::
+
+### 📁 Bölüm I: Dosya Bilgileri
+
+::: {.callout-note}
+## I.1 — Dosya Adı Anlamlı
+Dosyanın adı, ne içerdiğini anlatmalı.
+
+✅ İyi: `koah_kohort_veri_2024-11-15.xlsx`  
+❌ Kötü: `dosya1.xlsx`, `Yeni Belge.xlsx`, `son hali (2).xlsx`
+
+- [ ] Dosya adı projeyi/içeriği belirtir
+- [ ] Tarih var (sürüm karışıklığı önler)
+- [ ] Türkçe karakter ve boşluk yok
+:::
+
+::: {.callout-note}
+## I.2 — Sürüm Kontrolü
+Daha önceki sürümleri silmemiş, ama doğru sürümü göndermek için ad düzenli olmalı.
+
+- [ ] Hangi dosyanın güncel olduğu belli
+- [ ] Eskiler `_arsiv` klasörüne taşınmış
+:::
+
+### 🎯 Bölüm J: Analiz Hazırlığı
+
+::: {.callout-note}
+## J.1 — Araştırma Sorusu Net
+Bu sütunlar hangi analiz için kullanılacak? Belli bir hipoteziniz var mı?
+
+- [ ] Birincil sonlanım (outcome) belirlenmiş
+- [ ] Birincil maruziyet (exposure) belirlenmiş
+- [ ] Karıştırıcı (confounder) düşünülmüş
+- [ ] Hangi analiz yapılacak (regresyon, sağkalım, vb.) belli
+:::
+
+::: {.callout-note}
+## J.2 — Etik Onay
+Veri toplama etik kurul onaylı mı?
+
+- [ ] Etik kurul onayı var
+- [ ] Onay kodu / referansı paylaşılabilir
+- [ ] Hasta onamı alınmış (gerekiyorsa)
+:::
+
+## 🎁 Hızlı Skor
+
+Her kontrol kutucuğu 1 puan. Toplam **42 kontrol**.
+
+| Skor | Yorum |
+|------|-------|
+| 42/42 | 🎉 Mükemmel! Veriniz hazır, gönderebilirsiniz. |
+| 38-41 | ✅ İyi. Eksikleri tamamlayıp gönderin. |
+| 30-37 | ⚠️ Orta. Eksikler analizde sorun çıkarır, lütfen halledin. |
+| <30 | ❌ Veri henüz hazır değil. Rehberin başına dönün. |
+
+## 📤 Veri Göndermeden Önce Son Adım
+
+Verinizi gönderirken e-postaya/mesaja ekleyin:
+
+```
+Konu: [Proje adı] — Veri Analiz Talebi
+
+Sayın [İstatistikçi],
+
+[Proje adı] çalışmasının verilerini analiz için ekte gönderiyorum.
+
+Çalışma özeti:
+- Tasarım: [örn. retrospektif kohort]
+- Örneklem: [örn. n=312 KOAH hastası]
+- Birincil soru: [örn. "Geç vs erken NIV başlama mortaliteyi etkiler mi"]
+
+Veri kontrol durumu:
+- ✅ "Veri Temizliği Rehberi" kontrol listesi: 41/42 (J.1 düşünme aşamasında)
+- ✅ Codebook ekte
+- ✅ Etik onay kodu: [kod]
+
+Sorularınız için müsaitim.
+
+Saygılarımla,
+[Adınız]
+```
+
+Bu mesaj formatı işinizi **çok hızlandıracak**. İstatistikçi 30 saniyede sorunun ne olduğunu, verinin ne kadar hazır olduğunu anlayacak.
+
+## ✅ Bitti!
+
+Bu rehberi takip ederek **istatistik analiz öncesi en sık karşılaşılan tüm sorunları** çözmüş olursunuz.
+
+Sorunuz veya geri bildiriminiz için: [GitHub Issues](https://github.com/drmuammer/veri-temizligi/issues)
+
+Başarılar! 🎯

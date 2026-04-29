@@ -1,0 +1,282 @@
+---
+title: "3. OpenRefine Rehberi"
+subtitle: "Kod yazmadan, ücretsiz, güçlü veri temizliği"
+---
+
+## OpenRefine Nedir?
+
+**OpenRefine** (eski adıyla Google Refine), kategori temizliği, fuzzy matching ve toplu metin işleme için tasarlanmış **ücretsiz ve açık kaynaklı** bir araçtır.
+
+::: {.callout-tip}
+## Neden OpenRefine?
+
+- **Ücretsiz** — kurumsal lisans gerekmez
+- **Yerel** — verileriniz bilgisayarınızdan çıkmaz, gizlilik güvende
+- **Tarayıcıda çalışır** — ama bilgisayarınıza kurulur, internet gerekmez
+- **Kod yok** — tıklayarak kullanılır
+- **Türkçe karakter desteği** — UTF-8 ile sorunsuz çalışır
+:::
+
+OpenRefine'ın en güçlü özelliği **Cluster** (kümeleme) — `Erkek`, `erkek`, `E`, `Erkk` gibi tutarsız kategori değerlerini tek tıkla bir araya getirip "hepsi aynı şey" diyebilmenize izin verir.
+
+## 3.1 Kurulum
+
+### Windows
+
+1. **<https://openrefine.org/download.html>** adresine gidin
+2. **Windows kit (with embedded Java)** seçeneğini indirin (~150 MB)
+3. ZIP dosyasını masaüstüne çıkarın
+4. Klasör içinde **`openrefine.exe`** dosyasını çift tıklayın
+5. Tarayıcınız otomatik açılır: `http://127.0.0.1:3333`
+
+### Mac
+
+1. Aynı sayfadan **Mac kit** indirin
+2. `.dmg` dosyasını açın, `OpenRefine` uygulamasını **Applications** klasörüne sürükleyin
+3. İlk açılışta "developer not verified" uyarısı çıkarsa: sağ tık → **Aç** → **Aç**
+4. Tarayıcı otomatik açılır
+
+::: {.callout-warning}
+## Java Gereksinimi
+"Java not found" hatası alırsanız, **Java 11 veya üstü** kurulu olmalı. Windows için "with embedded Java" sürümü zaten Java içerir.
+:::
+
+## 3.2 Yeni Proje Oluşturma
+
+OpenRefine açılınca karşınıza üç sekme çıkar:
+
+- **Create Project** — yeni proje oluştur
+- **Open Project** — daha önce açtığınız projeleri aç
+- **Import Project** — dışa aktarılmış proje yükle
+
+### Adım 1: Veri Yükleme
+
+**Create Project** → **This Computer** → **Choose Files**
+
+Excel (`.xlsx`), CSV, TSV, JSON dosyalarını destekler. Excel dosyanızı seçin → **Next**.
+
+### Adım 2: Önizleme
+
+OpenRefine size verinin nasıl yüklenecek olduğunu önizler:
+
+- ✅ Doğru sayfa (worksheet) seçili mi?
+- ✅ İlk satır başlık olarak işaretli mi? ("Parse next 1 line(s) as column headers")
+- ✅ Türkçe karakterler doğru görünüyor mu? (Encoding: UTF-8)
+- ❌ Boş satırlar atlanmış mı? ("Skip first N rows" gerekirse kullanın)
+
+Sağ üstte **Project name** girin (örn. `koah_veri_v1`) → **Create Project**.
+
+## 3.3 Temel Arayüz
+
+Proje açıldığında şunları görürsünüz:
+
+- **Üst menü:** her sütunda küçük üçgen var → o sütun için işlemler
+- **Sol panel:** Facet/Filter (filtreleme alanı) ve Undo/Redo (geri al/ileri al)
+- **Orta:** veri tablosu
+
+::: {.callout-tip}
+## Geri Al güvencesi
+OpenRefine **her işlemi kaydeder**. Sol panelden **Undo / Redo** sekmesini açıp herhangi bir adıma geri dönebilirsiniz. Yanlış yapmaktan korkmayın!
+:::
+
+## 3.4 Facet — Sütundaki Tüm Değerleri Görme
+
+**Facet**, bir sütundaki tüm benzersiz değerleri ve kaç kez geçtiklerini gösterir. Tutarsız kategorileri görmek için ilk başvurulacak araçtır.
+
+### Adım Adım:
+
+1. `cinsiyet` sütununun başlığındaki üçgene tıkla
+2. **Facet** → **Text facet**
+3. Sol panelde tüm değerler ve sayıları görünür:
+
+```
+Erkek    245
+erkek     32
+E         18
+ERKEK     12
+Erkk       2
+Kadın    198
+kadın     21
+K          7
+```
+
+Tek bakışta tüm tutarsızlıkları görüyorsunuz. Şimdi temizliğe geçelim.
+
+## 3.5 Cluster — Kategori Temizliğinin Sihri
+
+**Cluster** OpenRefine'ın yıldız özelliğidir. Benzer ama tam aynı olmayan değerleri otomatik gruplar.
+
+### Adım Adım:
+
+1. Aktif facet panelinde sağ üstte **Cluster** butonu var → tıklayın
+2. Yeni pencerede gruplar görünür:
+
+```
+Cluster size: 5      Row count: 309
+- Erkek
+- erkek         } Bunların hepsi aynı sayılsın mı?
+- E                Yeni değer: [Erkek      ] ✅
+- ERKEK            
+- Erkk             
+
+Cluster size: 3      Row count: 226
+- Kadın
+- kadın         } Yeni değer: [Kadın      ] ✅
+- K
+```
+
+3. Her grup için:
+   - ✅ **Merge?** kutusunu işaretle
+   - **New Cell Value** alanına standart değeri yaz (örn. `Erkek`)
+4. **Merge Selected & Re-Cluster** butonuna bas
+
+Sistem otomatik olarak benzer grupları yeniden tarar; küçük yazım hatalarını da yakalar.
+
+### Cluster Algoritmaları
+
+OpenRefine birkaç farklı algoritma sunar:
+
+| Method | Ne yakalar | Örnek |
+|--------|------------|-------|
+| **Key collision: fingerprint** | Sıralama/küçük-büyük harf farklı | `Erkek`, `erkek`, `ERKEK` |
+| **Key collision: ngram** | İçerik benzer | `metformin 500`, `Metformin 500mg` |
+| **Nearest neighbor: levenshtein** | Yazım hatası | `Erkek`, `Erkk`, `Erekk` |
+| **Nearest neighbor: PPM** | Komplike eşleşme | Geniş varyasyonlar |
+
+Genelde **fingerprint** ile başlayın, sonra **ngram**, en son **levenshtein** ile yazım hatalarını yakalayın.
+
+## 3.6 Common Transforms — Toplu Metin İşleme
+
+Sütun başlığındaki üçgen → **Edit cells** → **Common transforms**:
+
+| İşlem | Ne yapar |
+|-------|----------|
+| **Trim leading and trailing whitespace** | Baş/son boşlukları temizler |
+| **Collapse consecutive whitespace** | Birden fazla boşluğu tek boşluğa indirir |
+| **Unescape HTML entities** | `&amp;` gibi HTML kodlarını çevirir |
+| **To uppercase / lowercase / titlecase** | Büyük/küçük/baş harf büyük yapar |
+| **To number** | Metni sayıya çevirir |
+| **To date** | Metni tarihe çevirir |
+
+::: {.callout-tip}
+## İlk yapılacak iş
+Her metin sütununa şunları uygulayın:
+
+1. Trim leading and trailing whitespace
+2. Collapse consecutive whitespace
+
+Bu iki işlem **görünmez boşluk problemlerinin %90'ını** çözer.
+:::
+
+## 3.7 Tarih Formatı Düzeltme
+
+`dogum_tarihi` sütununda farklı formatlar varsa:
+
+1. Sütun başlığı → **Edit cells** → **Common transforms** → **To date**
+
+OpenRefine çoğu tarihi otomatik tanır. Tanımayanlar için:
+
+2. Sütun başlığı → **Edit cells** → **Transform...**
+3. Açılan kutuya GREL kodu yazın:
+
+```javascript
+value.toDate("dd.MM.yyyy")
+```
+
+Bu, `15.03.1965` formatını tarihe çevirir. Sonra:
+
+4. Tüm sütunu standart bir formata yazdırmak için:
+
+```javascript
+value.toString("yyyy-MM-dd")
+```
+
+## 3.8 Eksik Değerleri Tutarlı Hâle Getirme
+
+`yok`, `-`, `?`, `NA` gibi metinleri boş hücreye çevirmek için:
+
+1. Sütun → **Facet** → **Text facet**
+2. Sol panelde temizlemek istediğiniz değere tıkla (örn. `yok`)
+3. Tablo o satırlarla filtrelenir
+4. Sütun → **Edit cells** → **Transform...**
+5. Kodu yaz:
+
+```javascript
+""
+```
+
+Bu seçili satırlardaki değeri boş yapar. **Apply** → boş hücreler oluşur.
+
+Aynısını her geçersiz değer için tekrarlayın (`-`, `?`, `NA` vb.).
+
+## 3.9 Duplikatları Bulma
+
+1. Karşılaştırmak istediğiniz sütunu sırala: başlık → **Sort**
+2. Yan sütunda **Edit column** → **Add column based on this column...**
+3. Yeni sütun adı: `duplicate_check`
+4. GREL ifadesi:
+
+```javascript
+if(row.index > 0 && cells["hasta_id"].value == cells["hasta_id"].cells[row.index - 1].value, "DUPLICATE", "")
+```
+
+Bu, art arda gelen aynı `hasta_id`'leri işaretler. Sonra `duplicate_check` sütununa Facet uygulayıp DUPLICATE olanları görebilirsiniz.
+
+## 3.10 Sonucu Dışa Aktarma
+
+Temizlik bitince sağ üstte **Export** butonu:
+
+- **Comma-separated value (CSV)** — istatistik programları için en uyumlu format ⭐
+- **Tab-separated value (TSV)**
+- **Excel (XLS) / Excel 2007+ (XLSX)**
+- **HTML table**
+
+::: {.callout-tip}
+## Neden CSV?
+CSV (virgülle ayrılmış değer) tüm istatistik programlarının (R, SPSS, Stata, SAS, Python) sorunsuz okuduğu **evrensel formattır**. Excel'in özelliklerine ihtiyacınız yoksa CSV tercih edin.
+:::
+
+Dışa aktarırken **encoding olarak UTF-8** seçtiğinizden emin olun (Türkçe karakterler için).
+
+## 3.11 İşinizi Kaydetme
+
+OpenRefine işlemleri otomatik kaydeder; programı kapatıp açtığınızda **Open Project** sekmesinden devam edebilirsiniz.
+
+**Bonus:** İşlem geçmişini başka bir projeye uygulayabilirsiniz!
+
+1. **Undo/Redo** sekmesi → **Extract...**
+2. JSON kodunu kopyalayın
+3. Başka projede aynı yere → **Apply...** → JSON yapıştır
+4. Tüm temizlik adımları otomatik uygulanır
+
+Bu, **aynı tip veri için tekrarlayan temizlik şablonu** oluşturmanın yoludur. Çok zaman kazandırır.
+
+## ✅ Mini Pratik
+
+OpenRefine'ı denemek için:
+
+1. Excel dosyanızdan küçük bir örnek alın (örn. ilk 50 satır)
+2. Yeni proje oluşturun
+3. Şu sırayı uygulayın:
+   - Tüm metin sütunlarına **Trim whitespace**
+   - Kategorik sütunlara **Cluster** (en az fingerprint)
+   - `cinsiyet`, `egitim` vb. sütunları standartlaştırın
+   - Tarih sütununu **To date** ile dönüştürün
+4. Sonucu CSV olarak dışa aktarın
+5. Sonucu Excel'de açıp gözden geçirin
+
+İlk denemenizde 30-60 dakika sürebilir. İkinci denemede 10 dakikaya iner. Üçüncüden sonra refleks olur.
+
+## 📺 Video ve Ek Kaynaklar
+
+- **Resmi OpenRefine kullanıcı kılavuzu:** <https://openrefine.org/docs>
+- **Library Carpentry OpenRefine dersi:** <https://librarycarpentry.org/lc-open-refine/> (İngilizce, ama görsel olarak çok anlaşılır)
+- **YouTube'da "OpenRefine Türkçe"** araması da bazı temel videolar bulur
+
+## ✅ Bu Bölümün Özeti
+
+OpenRefine'ı öğrenmek 1-2 saatlik bir yatırımdır ve sonrası boyunca size **her veri için saatler** kazandırır. Özellikle **Cluster** özelliği, başka hiçbir araçta bu kadar pratik değildir.
+
+Eğer biraz R denemek isterseniz: [4. R ile Temizlik →](04-r-temizlik.qmd)
+
+Verinizin hazır olup olmadığını kontrol etmek isterseniz: [5. Kontrol Listesi →](05-kontrol-listesi.qmd)

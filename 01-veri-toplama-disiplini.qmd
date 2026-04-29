@@ -1,0 +1,258 @@
+---
+title: "1. Veri Toplama Disiplini"
+subtitle: "Doğru başlamak, sonradan temizlemekten kolaydır"
+---
+
+## Neden Önemli?
+
+Veri temizliğinin **%80'i, veri toplama aşamasında önlenebilir**. Veriniz daha toplanırken bazı kuralları izlerseniz, sonradan saatlerce yapacağınız iş ortadan kalkar.
+
+Bu bölüm, henüz veri toplamamış araştırmacılar içindir. Veriniz hazırsa doğrudan [2. Sık Karşılaşılan Sorunlar](02-sik-sorunlar.qmd) bölümüne geçebilirsiniz.
+
+## 1.1 Tidy Data Prensipleri
+
+İstatistikçi Hadley Wickham'ın **"tidy data"** olarak adlandırdığı yaklaşım, modern veri biliminin omurgasıdır. Üç basit kural:
+
+::: {.callout-note}
+## Tidy data kuralları
+
+1. **Her satır bir gözlemdir** (örn. bir hasta, bir ölçüm, bir vaka)
+2. **Her sütun bir değişkendir** (örn. yaş, cinsiyet, tansiyon)
+3. **Her hücre tek bir değer içerir** (birden fazla değer aynı hücrede olmamalı)
+:::
+
+### Yanlış Örnek
+
+| Hasta | Tansiyon ölçümleri |
+|-------|-------------------|
+| Ahmet | 120/80, 130/85, 125/82 |
+| Ayşe  | 110/70, 115/72        |
+
+Burada sorunlar:
+
+- Bir hücrede birden fazla değer
+- Sistolik ve diyastolik aynı hücrede
+- Kaç ölçüm olduğu satırdan satıra değişiyor
+
+### Doğru Örnek
+
+| hasta_id | olcum_no | sistolik | diyastolik |
+|----------|----------|----------|------------|
+| 1        | 1        | 120      | 80         |
+| 1        | 2        | 130      | 85         |
+| 1        | 3        | 125      | 82         |
+| 2        | 1        | 110      | 70         |
+| 2        | 2        | 115      | 72         |
+
+Her ölçüm ayrı satır, her değişken ayrı sütun. Bu yapıya **uzun format (long format)** denir ve istatistik yazılımlarının beklediği formattır.
+
+## 1.2 Sütun İsimlendirme Kuralları
+
+::: {.callout-warning}
+## Excel'de sütun başlığı yazarken
+- ❌ Türkçe karakter (ğ, ü, ş, ı, ö, ç) kullanmayın
+- ❌ Boşluk koymayın
+- ❌ Özel karakter (?, !, %, *, /) kullanmayın
+- ❌ Rakamla başlatmayın
+:::
+
+### Önerilen yöntem: snake_case
+
+Tüm harfleri küçük tut, kelimeleri alt çizgi (`_`) ile birleştir:
+
+| ❌ Kötü | ✅ İyi |
+|--------|-------|
+| Doğum Tarihi | dogum_tarihi |
+| Yaş (yıl) | yas_yil |
+| Tansiyon-Sistolik | sistolik |
+| 1. Ölçüm | olcum_1 |
+| BMI(kg/m²) | bmi |
+
+### İyi sütun adı özellikleri
+
+- Kısa ama anlamlı (3-25 karakter)
+- Birim bilgisi gerekiyorsa adın içinde (`agirlik_kg`, `boy_cm`)
+- Tutarlı (tüm tarih sütunları `*_tarih`, tüm sayım sütunları `*_sayisi` vb.)
+- Anlaşılır (`x1`, `var2` gibi anlamsız adlardan kaçının)
+
+## 1.3 Eksik Değer Protokolü
+
+Bu, en sık yapılan hatadır.
+
+::: {.callout-important}
+## Eksik değer için tek kural
+
+**Hücreyi boş bırakın.**
+
+"yok", "-", "?", "0", "999", "NA", "veri yok" yazmayın.
+:::
+
+### Neden?
+
+İstatistik programları boş hücreyi otomatik olarak "eksik değer (NA)" olarak tanır. Ama "yok" yazarsanız, programa bunu özel olarak söylemeniz gerekir. Üstelik:
+
+- Sütun bazen sayısal bazen metin olur (programlar sütunu metin sanır)
+- "0" yazarsanız analiz "ölçüm 0" sanar (gerçek 0 ile karışır)
+- "999" yazarsanız ortalamayı bozar
+
+### Eksik Değer Nedeni Önemliyse
+
+Bazı durumlarda neden eksik olduğunu kayıt etmek istersiniz. O zaman ek bir sütun açın:
+
+| hasta_id | bmi  | bmi_neden_eksik |
+|----------|------|----------------|
+| 1        | 24.5 | (boş)          |
+| 2        |      | hasta_olcum_reddetti |
+| 3        |      | cihaz_arizasi  |
+
+Bu yaklaşım hem analizi bozmaz hem de bilgiyi korur.
+
+## 1.4 Tarih Formatı
+
+Tarih, Excel'in en büyük kabusu. Çözümü tek bir kuralla halleder:
+
+::: {.callout-tip}
+## Tarih için tek format: ISO 8601
+
+**`YYYY-AA-GG`** (örn. `2024-03-15`)
+
+Bu format dünya çapında standarttır, tüm yazılımlar tanır, sıralama otomatik doğrudur, dilden bağımsızdır.
+:::
+
+### Neden ISO 8601?
+
+| Format | Sorun |
+|--------|-------|
+| `15.03.2024` | TR formatı, US programları yanlış okur |
+| `03/15/2024` | US formatı, TR programları yanlış okur |
+| `15-Mar-24` | "Mar" ay isimleri dile bağlı |
+| `15 Mart 2024` | Hiçbir program otomatik tanımaz |
+| `2024-03-15` | ✅ Evrensel, sıralanabilir, makinece okunabilir |
+
+### Excel'de tarih girerken
+
+1. Sütunu seç
+2. Sağ tık → **Hücreleri Biçimlendir** → **Sayı** → **Tarih**
+3. Tür: `2012-03-14` formatını seç
+4. Tüm tarihleri bu formatta gir
+
+::: {.callout-warning}
+## Excel'in tarih tuzağı
+Excel bazen `1.5`, `2/3`, `15-3` gibi metinleri otomatik tarihe çevirir. Önlemek için: hücreyi önce **Metin** olarak biçimlendirin ya da girişin başına tek tırnak (`'`) ekleyin: `'1.5`.
+:::
+
+## 1.5 Kategori Değerleri için Sözlük
+
+Cinsiyet, eğitim, medeni durum gibi kategorik değişkenlerde **tek bir kelime listesi belirleyin** ve veriyi girenler hep aynı kelimeyi kullansın.
+
+### Kötü örnek
+
+| cinsiyet |
+|----------|
+| Erkek    |
+| erkek    |
+| E        |
+| ERKEK    |
+| K        |
+| Kadın    |
+| Kdn      |
+
+İstatistik programı bunları **7 farklı kategori** sayar. Sonradan birleştirmek zaman alır.
+
+### İyi örnek
+
+Bir **kod sözlüğü** belirleyin ve dosyaya yapıştırın:
+
+```
+cinsiyet: "Erkek" veya "Kadın" (büyük harf-küçük harf duyarlı)
+egitim:   "Okur-yazar değil", "İlkokul", "Ortaokul", "Lise", "Üniversite", "Lisansüstü"
+medeni:   "Bekar", "Evli", "Boşanmış", "Dul"
+```
+
+Veri girişi yapan herkesin bu listeyi açıp ona göre yazması, sonradan saatlerce sürecek temizliği önler.
+
+## 1.6 Kod Sözlüğü (Codebook)
+
+Veri tabanınızla birlikte bir **codebook** dosyası tutun. Bu, hangi sütunda ne olduğunu, birimlerini, değerlerin anlamını yazdığınız bir tablodur.
+
+### Örnek Kod Sözlüğü
+
+| sutun | tip | birim | aciklama | gecerli_degerler |
+|-------|-----|-------|----------|-------------------|
+| hasta_id | sayisal | — | Benzersiz hasta numarası | 1-9999 |
+| dogum_tarihi | tarih | — | Hastanın doğum tarihi | YYYY-AA-GG |
+| cinsiyet | kategorik | — | Hastanın cinsiyeti | Erkek, Kadın |
+| boy_cm | sayisal | cm | Hastanın boyu | 100-220 |
+| agirlik_kg | sayisal | kg | Hastanın ağırlığı | 30-200 |
+| sistolik | sayisal | mmHg | Sistolik kan basıncı | 60-260 |
+| diyabet_var | kategorik | — | Diyabet öyküsü | Var, Yok, Bilinmiyor |
+
+Bu tablo aynı Excel dosyasında ayrı bir sayfa olarak (örn. "codebook" sayfası) tutulabilir.
+
+::: {.callout-tip}
+## Codebook altın kuraldır
+Codebook olmadan veri toplamak, **etiketsiz şişeleri laboratuvar dolabına koymaya benzer**. 6 ay sonra hangi şişede ne olduğunu kimse hatırlamaz.
+:::
+
+## 1.7 Excel Dosyası Yapısı
+
+::: {.callout-note}
+## İdeal Excel dosyası
+
+- **Tek sayfa** (worksheet) — eğer çoklu sayfa lazımsa: bir sayfa "veri", bir sayfa "codebook"
+- **Tek başlık satırı** (sayfa 1, satır 1)
+- **Birleştirilmiş hücre yok**
+- **Renk/biçimlendirme yok** (renkleri programlar okumaz)
+- **Toplam/özet satırı yok**
+- **Boş satır/sütun yok** (veri içinde)
+- **Veri başlangıcı her zaman A1 hücresinden**
+:::
+
+### ❌ Tipik Yanlış Excel
+
+```
+[boş]
+"Çalışma: KOAH Olguları"        (başlık metni)
+"Toplayan: Dr. X"
+[boş]
+[Birleştirilmiş hücre: HASTA BİLGİLERİ | LABORATUVAR]
+"ad" "soyad" "yaş" | "WBC" "CRP"
+"Ahmet" "Yıl." "65" | "8.5" "12"
+...
+"TOPLAM" — — — — "ortalama: 9.2"
+```
+
+### ✅ Doğru Excel
+
+```
+hasta_id  ad     soyad    yas   wbc   crp
+1         Ahmet  Yıl.     65    8.5   12
+2         Ayşe   Kar.     58    7.2   8
+...
+```
+
+## 1.8 Dosya İsimlendirme
+
+Veri dosyasının kendisi de düzenli isimlendirilmeli:
+
+::: {.callout-tip}
+## Önerilen dosya adı formatı
+
+`<projead>_<icerik>_<tarih>.xlsx`
+
+Örnek: `koah_kohort_veri_2024-11-15.xlsx`
+
+Sürüm güncellediğinizde tarihi değiştirin, eskisini silmeyin (`_arsiv` klasörüne taşıyın).
+:::
+
+## ✅ Bu Bölümün Özeti
+
+- Tidy data: bir satır bir gözlem, bir sütun bir değişken
+- Sütun adları: snake_case, Türkçe karakter yok
+- Eksik değer: hücreyi boş bırakın, kod yazmayın
+- Tarih: `YYYY-AA-GG` formatı
+- Kategoriler: tek liste belirleyin, herkes ona uysun
+- Kod sözlüğü tutun
+- Excel dosyası: tek sayfa, tek başlık, birleştirme yok
+
+Veri toplama tamamlandıysa sıradaki bölüme geçin: [2. Sık Karşılaşılan Sorunlar →](02-sik-sorunlar.qmd)

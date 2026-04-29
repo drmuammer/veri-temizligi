@@ -1,0 +1,98 @@
+---
+title: ""
+pagetitle: "Veri Temizliği Rehberi"
+toc: false
+page-layout: full
+---
+
+::: {.hero-banner}
+# 🧹 Veri Temizliği Rehberi
+
+Klinik araştırmacılar için pratik bir başlangıç
+:::
+
+## 👋 Bu Rehber Kimin İçin?
+
+Bu rehber; istatistiksel analiz için bana, bir biyoistatistikçiye ya da metodoloji danışmanına başvurmadan önce **kendi verisini hazırlamak isteyen** araştırmacılar için yazıldı.
+
+Hedef kitle:
+
+- Klinisyenler ve sağlık araştırmacıları
+- Tez aşamasındaki uzmanlık ve doktora öğrencileri
+- Excel'i günlük araç olarak kullanan, ama kod yazmayan araştırmacılar
+- "Verim hazır mı, hazır değil mi" sorusuna net cevap arayanlar
+
+## 🎯 Neden Veri Temizliği?
+
+Bir veri analizi projesinin **%60-80'i veri temizliğine** harcanır. Eğer veriniz analiz için hazır değilse:
+
+- ❌ Yanlış sonuçlar üretebilirsiniz
+- ❌ Yayın hakem süreçlerinde geri dönüşler yersiniz  
+- ❌ İstatistikçi ile defalarca yazışmak zorunda kalırsınız
+- ❌ Zaman ve enerji kaybedersiniz
+
+Bu rehber, verinizi **bir uzmana göndermeden önce** kendi başınıza halledebileceğiniz adımları gösterir.
+
+## 📚 Rehber İçeriği
+
+::: {.kart-grid}
+
+::: {.kart}
+### 1. Veri Toplama Disiplini
+Daha veri toplamadan, doğru başlamak için bilmeniz gereken prensipler. Kod sözlüğü, uzun format, isimlendirme kuralları.
+
+[**Başla →**](rehber/01-veri-toplama-disiplini.qmd)
+:::
+
+::: {.kart}
+### 2. Sık Karşılaşılan Sorunlar
+Birleştirilmiş hücreler, tarih kabusu, eksik değer kodlaması, kategori tutarsızlıkları — örneklerle.
+
+[**Başla →**](rehber/02-sik-sorunlar.qmd)
+:::
+
+::: {.kart}
+### 3. OpenRefine Rehberi
+Kod yazmadan, tarayıcıda çalışan ücretsiz araçla veri temizliği. Adım adım anlatım.
+
+[**Başla →**](rehber/03-openrefine-rehberi.qmd)
+:::
+
+::: {.kart}
+### 4. R ile Temizlik
+Otomatik kontrol raporu üretmek isteyenler için R'ın `janitor` paketiyle pratik temizlik.
+
+[**Başla →**](rehber/04-r-temizlik.qmd)
+:::
+
+::: {.kart}
+### 5. Kontrol Listesi
+İstatistikçinize göndermeden önce verinizin geçmesi gereken sınav. Tek sayfa.
+
+[**Başla →**](rehber/05-kontrol-listesi.qmd)
+:::
+
+:::
+
+## 🚀 Nereden Başlayayım?
+
+::: {.callout-tip}
+## Hızlı yol haritası
+
+- **Veri henüz toplanmadıysa:** [1. Veri Toplama Disiplini](rehber/01-veri-toplama-disiplini.qmd) ile başlayın.
+- **Veri elde, kirli, R bilmiyorum:** [3. OpenRefine Rehberi](rehber/03-openrefine-rehberi.qmd).
+- **Veri elde, biraz R bilirim:** [4. R ile Temizlik](rehber/04-r-temizlik.qmd).
+- **"Hazır mı?" diye kontrol etmek istiyorum:** [5. Kontrol Listesi](rehber/05-kontrol-listesi.qmd).
+:::
+
+## 📜 Lisans ve Katkı
+
+Bu rehber [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) altında paylaşılmaktadır. Kaynağı belirterek özgürce kullanabilir, dağıtabilir ve uyarlayabilirsiniz.
+
+Hata ya da öneri için [GitHub Issues](https://github.com/drmuammer/veri-temizligi/issues) üzerinden ulaşabilirsiniz.
+
+---
+
+::: {.text-center}
+*"Hatalı veri, hatalı sonuç. Garbage in, garbage out."*
+:::

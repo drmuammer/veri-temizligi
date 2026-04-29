@@ -1,0 +1,319 @@
+---
+title: "2. Sık Karşılaşılan Sorunlar"
+subtitle: "Excel verisinde gördüğüm en yaygın 10 problem"
+---
+
+Bu bölümde, klinik araştırmacılardan bana ulaşan Excel dosyalarında **en sık gördüğüm 10 problemi** örneklerle anlatacağım. Her sorun için: nasıl tanırsınız, neden problem, hızlı çözümü.
+
+## Problem 1: Birleştirilmiş Hücreler
+
+**Nasıl görünür?**
+
+```
+| HASTA BİLGİLERİ                  | LABORATUVAR        |
+| ad      soyad    yas   cinsiyet  | wbc      crp       |
+| Ahmet   Yıl.    65     E         | 8.5      12        |
+```
+
+İlk satır iki birleştirilmiş hücre içeriyor.
+
+**Neden problem?**
+
+R, Python ve istatistik programları birleştirilmiş hücreyi okuyamaz. Programa veri yüklenince başlıklar `NA, NA, NA, NA, NA, NA` gibi okunur.
+
+**Çözüm:**
+
+1. Tüm tabloyu seçin
+2. Sağ tık → **Hücreleri Biçimlendir** → **Hizalama**
+3. **"Hücreleri birleştir"** kutusunu boşaltın
+4. Üst satırı silin (zaten gereksizdi), alt satırı tek başlık olarak bırakın
+
+## Problem 2: Çift Başlık Satırı
+
+**Nasıl görünür?**
+
+İki satırlık sütun başlıkları:
+
+```
+| Yaş | Tansiyon            | Kolesterol           |
+|     | Sistolik | Diyastolik| Total | LDL | HDL    |
+| 65  | 120      | 80        | 220   | 140 | 50     |
+```
+
+**Neden problem?**
+
+Veri tek başlık satırı bekler. İki satırlı başlık karışık veri tipi yaratır.
+
+**Çözüm:**
+
+Tek satıra indirin, gruplamayı sütun adının kendisinde belirtin:
+
+```
+| yas | tansiyon_sistolik | tansiyon_diyastolik | kol_total | kol_ldl | kol_hdl |
+|  65 | 120               | 80                  | 220       | 140     | 50      |
+```
+
+## Problem 3: Tarih Formatı Karmaşası
+
+**Nasıl görünür?**
+
+```
+| dogum_tarihi |
+| 15.03.1965   |
+| 23/04/1972   |
+| 1968-12-01   |
+| 5-Mart-1980  |
+| 38563        |
+```
+
+Beş farklı format aynı sütunda.
+
+**Neden problem?**
+
+Hiçbir program tutarsız formatı otomatik yorumlayamaz. Üstelik `38563` Excel'in iç tarih sayısıdır (`2005-08-21`); başka programa gidince anlamsızlaşır.
+
+**Çözüm:**
+
+::: {.callout-important}
+## Tek format: `YYYY-AA-GG`
+Tüm tarihleri elle ya da Excel'in **Bul-Değiştir** özelliğiyle bu formata çevirin.
+:::
+
+Excel'de hızlı çözüm:
+
+1. Tarih sütununu seçin
+2. Sağ tık → **Hücreleri Biçimlendir** → **Tarih**
+3. Tür: `2012-03-14` seçin
+4. Eğer Excel hâlâ hatalı yorumluyorsa, `=TEXT(A2, "yyyy-mm-dd")` formülüyle yeni sütun oluşturun
+
+## Problem 4: Eksik Değer Kodlama Tutarsızlığı
+
+**Nasıl görünür?**
+
+```
+| sigara_paket_yili |
+| 25                |
+| yok               |
+| -                 |
+| ?                 |
+| 0                 |
+| NA                |
+| (boş)             |
+| veri yok          |
+```
+
+Aynı sütunda eksiklik **8 farklı yöntemle** ifade edilmiş.
+
+**Neden problem?**
+
+- Programlar yalnızca boş hücreyi NA olarak tanır
+- Sütun "yok" yüzünden metin sanılır, ortalama alınamaz
+- "0" gerçek 0 ile karışır (sigara hiç kullanmamış olabilir!)
+
+**Çözüm:**
+
+::: {.callout-tip}
+## Hızlı düzeltme
+
+Excel'de **Bul-Değiştir** (Ctrl+H):
+
+| Aranan | Değiştirilecek |
+|--------|----------------|
+| `yok`  | (boş) |
+| `-`    | (boş) |
+| `?`    | (boş) |
+| `NA`   | (boş) |
+| `veri yok` | (boş) |
+
+"0" değerine dokunmayın — gerçekten 0 olabilir, hastaya sorup kontrol edin.
+:::
+
+## Problem 5: Kategori Tutarsızlıkları
+
+**Nasıl görünür?**
+
+```
+| cinsiyet  |
+| Erkek     |
+| erkek     |
+| ERKEK     |
+| E         |
+| Erkk      |  ← yazım hatası
+| Erkek     |
+| Kadın     |
+```
+
+Programlar bunu **5 farklı kategori** olarak görür.
+
+**Çözüm:**
+
+OpenRefine'da **Cluster** özelliği bunu tek tıkla halleder ([Bölüm 3](03-openrefine-rehberi.qmd)). Manuel çözüm için Excel'de:
+
+1. Sütunu kopyala, yan sütuna yapıştır (yedek)
+2. **Bul-Değiştir** (Ctrl+H):
+   - `erkek` → `Erkek` (Eşleştirme: tüm hücre dahil değil)
+   - `ERKEK` → `Erkek`
+   - `E` → `Erkek` (sadece tam hücre eşleşmesi)
+   - `Erkk` → `Erkek`
+
+## Problem 6: Karışık Veri Tipi (Sayısal Sütunda Metin)
+
+**Nasıl görünür?**
+
+```
+| boy_cm    |
+| 165       |
+| 170       |
+| 1.75 m    |  ← metin
+| 168 cm    |  ← metin
+| 172       |
+| "yaklaşık 170" |  ← metin
+```
+
+**Neden problem?**
+
+Sütunun bir kısmı sayı, bir kısmı metin. Program tüm sütunu metin olarak yükler, ortalama alamazsınız.
+
+**Çözüm:**
+
+1. Sütunda metin içeren hücreleri tespit edin (hızlı yol: hücreleri sayısal formatla biçimlendirin, sayıya dönüşmeyenler metindir)
+2. Birim/açıklama içeriyorsa kaldırın: `1.75 m` → `175`, `168 cm` → `168`
+3. Belirsiz olanları boş bırakın ya da yeni sütunda not edin
+
+## Problem 7: Duplikat (Yinelenen) Kayıtlar
+
+**Nasıl görünür?**
+
+Aynı `hasta_id`'nin birden fazla satırda olması (yanlışlıkla iki kez girilmiş) ya da farklı satırların **aynı hastanın olduğu**, ID farklı olsa bile.
+
+**İki tür duplikat var:**
+
+| Tür | Tanım | Tespit |
+|-----|-------|--------|
+| **Tam duplikat** | Tüm sütunlar aynı | Kolay (sıralayıp gözlemek yeterli) |
+| **Kısmi duplikat** | Aynı kişi, farklı satırlar | Zor (ad+doğum tarihi gibi kombinasyonlar lazım) |
+
+**Çözüm:**
+
+Excel'de:
+
+1. **Veri** → **Yinelenenleri Kaldır**
+2. Karşılaştırma için sütun seç (örn. `hasta_id`, `ad`, `dogum_tarihi`)
+3. Sonucu kontrol et
+
+::: {.callout-warning}
+## Dikkat
+"Yinelenenleri Kaldır" sadece tam eşleşmeleri bulur. `Ahmet` ile `Ahmet ` (sonda boşluk) farklı sayılır. Önce **TRIM** uygulayın (Problem 10).
+:::
+
+R'da daha sağlam çözüm: `janitor::get_dupes()` ([Bölüm 4](04-r-temizlik.qmd)).
+
+## Problem 8: Toplam / Özet Satırları
+
+**Nasıl görünür?**
+
+Verinin içinde toplam veya ortalama satırları var:
+
+```
+| hasta_id | yas | bmi  |
+| 1        | 65  | 28   |
+| 2        | 58  | 24   |
+| 3        | 72  | 31   |
+| TOPLAM   | 195 | 83   |  ← bu satır veri değil!
+```
+
+**Neden problem?**
+
+Program bu satırı da hasta sayar. Ortalama hesaplanırsa, gerçek ortalama 27.7 yerine 41 çıkar.
+
+**Çözüm:**
+
+Veri girişi sırasında **özet satırı koymayın**. Eğer varsa: silin. Özet bilgi gerekiyorsa ayrı bir sayfada/dosyada tutun.
+
+## Problem 9: Birden Fazla Değer Aynı Hücrede
+
+**Nasıl görünür?**
+
+```
+| ilaclar                                           |
+| metformin, lisinopril, statin                    |
+| insulin + metformin                              |
+| sadece metformin                                  |
+| metformin/lisinopril                              |
+```
+
+Bir hücrede 1-3 ilaç adı, hepsi farklı ayraçla.
+
+**Neden problem?**
+
+"Hangi hastalar metformin kullanıyor?" sorusunu cevaplayamazsınız — program tek bir metin olarak görür.
+
+**Çözüm — İki yaklaşım:**
+
+### Yaklaşım A: Wide format (her ilaç bir sütun)
+
+```
+| metformin_var | lisinopril_var | statin_var | insulin_var |
+| 1             | 1              | 1          | 0           |
+| 1             | 0              | 0          | 1           |
+| 1             | 0              | 0          | 0           |
+| 1             | 1              | 0          | 0           |
+```
+
+İlaç sayısı az ve sabitse bu yaklaşım iyi.
+
+### Yaklaşım B: Long format (her ilaç ayrı satır)
+
+```
+| hasta_id | ilac        |
+| 1        | metformin   |
+| 1        | lisinopril  |
+| 1        | statin      |
+| 2        | insulin     |
+| 2        | metformin   |
+```
+
+Hastaya göre ilaç sayısı değişiyorsa bu yaklaşım daha uygun.
+
+## Problem 10: Boşluk ve Görünmez Karakter Sorunları
+
+**Nasıl görünür?**
+
+Görünmez ama orada olan boşluklar:
+
+```
+| ad      |
+| Ahmet   |  ← görünür sade
+| Ahmet   |  ← sonunda boşluk var
+|  Ahmet  |  ← başında ve sonunda boşluk
+| Ahmet	 |  ← TAB karakteri var
+```
+
+Ekrandan ayırt edemezsiniz, ama program bunları **dört farklı** kişi sanır.
+
+**Çözüm:**
+
+Excel'de **TRIM** fonksiyonu:
+
+```
+=TRIM(A2)
+```
+
+Bu formül başındaki, sonundaki ve içerideki çoklu boşlukları temizler. Tüm metin sütunlarına uygulayın.
+
+::: {.callout-tip}
+## Toplu TRIM uygulama
+
+1. Yan sütunda `=TRIM(A2)` yazın
+2. Aşağı çekin (formül tüm satırlara uygulanır)
+3. Yeni sütunu kopyalayın → **Özel Yapıştır** → **Yalnızca Değer**
+4. Eski sütunu silin
+:::
+
+## ✅ Bu Bölümün Özeti
+
+10 problemden hangileri sizin verinizde var? Her problem için ayrı bir düzeltme yaklaşımı var ve çoğu Excel içinde çözülebilir.
+
+**Sıradaki bölüm — bu problemleri toplu çözen güçlü bir araç:**
+
+[3. OpenRefine Rehberi →](03-openrefine-rehberi.qmd)

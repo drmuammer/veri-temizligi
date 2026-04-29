@@ -1,0 +1,83 @@
+project:
+  type: website
+  output-dir: _site
+
+website:
+  title: "Veri Temizliği Rehberi"
+  description: "Klinik araştırmacılar için pratik veri temizliği rehberi"
+  site-url: https://drmuammer.github.io/veri-temizligi/
+  repo-url: https://github.com/drmuammer/veri-temizligi
+  repo-actions: [edit, issue]
+  page-navigation: true
+  back-to-top-navigation: true
+
+  navbar:
+    background: "#0F172A"
+    foreground: "#14B8A6"
+    title: "🧹 Veri Temizliği"
+    left:
+      - href: index.qmd
+        text: Ana Sayfa
+      - text: Rehber
+        menu:
+          - rehber/01-veri-toplama-disiplini.qmd
+          - rehber/02-sik-sorunlar.qmd
+          - rehber/03-openrefine-rehberi.qmd
+          - rehber/04-r-temizlik.qmd
+          - rehber/05-kontrol-listesi.qmd
+    right:
+      - icon: github
+        href: https://github.com/drmuammer/veri-temizligi
+        aria-label: GitHub
+      - icon: house
+        href: https://muammerbeslen.com
+        aria-label: Website
+
+  sidebar:
+    style: "docked"
+    search: true
+    background: light
+    contents:
+      - href: index.qmd
+        text: "🏠 Ana Sayfa"
+      - section: "📚 Rehber"
+        contents:
+          - href: rehber/01-veri-toplama-disiplini.qmd
+            text: "1. Veri Toplama Disiplini"
+          - href: rehber/02-sik-sorunlar.qmd
+            text: "2. Sık Karşılaşılan Sorunlar"
+          - href: rehber/03-openrefine-rehberi.qmd
+            text: "3. OpenRefine Rehberi"
+          - href: rehber/04-r-temizlik.qmd
+            text: "4. R ile Temizlik"
+          - href: rehber/05-kontrol-listesi.qmd
+            text: "5. Kontrol Listesi"
+
+  page-footer:
+    left: "© 2026 Muammer Beslen, MD · [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)"
+    right:
+      - icon: github
+        href: https://github.com/drmuammer/veri-temizligi
+      - text: muammerbeslen.com
+        href: https://muammerbeslen.com
+
+format:
+  html:
+    theme:
+      light: cosmo
+      dark: darkly
+    css: styles.css
+    toc: true
+    toc-depth: 3
+    toc-location: right
+    toc-title: "İçindekiler"
+    code-copy: true
+    code-overflow: wrap
+    smooth-scroll: true
+    link-external-newwindow: true
+    anchor-sections: true
+    fig-cap-location: bottom
+    tbl-cap-location: top
+    highlight-style: github
+
+lang: tr

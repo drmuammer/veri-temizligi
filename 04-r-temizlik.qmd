@@ -1,0 +1,322 @@
+---
+title: "4. R ile Temizlik"
+subtitle: "Otomatik kontrol raporu için pratik R yaklaşımı"
+---
+
+## Bu Bölüm Kimin İçin?
+
+Bu bölüm, R'a **hiç dokunmamış** ya da çok az dokunmuş araştırmacılar içindir. Hedef kod yazmayı öğretmek değil, hazır kod bloklarını çalıştırarak **veri kalite raporu üretmektir**.
+
+::: {.callout-tip}
+## R'ın avantajı
+OpenRefine veri görsel temizliği için harika; ama R **otomatik kontrol** ve **tekrarlanabilir** temizlik için daha iyidir. Aynı analizi her hafta yapacaksanız (örn. tez verisi güncellendikçe), R bir kez yazılır defalarca çalıştırılır.
+:::
+
+## 4.1 R ve RStudio Kurulumu
+
+### Adım 1: R Kurulumu
+
+1. **<https://cran.r-project.org/>** adresine git
+2. İşletim sisteminize uygun sürümü indir (Windows için "Download R for Windows")
+3. `.exe` dosyasını çalıştır, varsayılan ayarlarla kur
+
+### Adım 2: RStudio Kurulumu
+
+R'ın kullanıcı dostu arayüzü:
+
+1. **<https://posit.co/download/rstudio-desktop/>** adresine git
+2. **Download RStudio Desktop** (ücretsiz sürüm)
+3. Kur ve aç
+
+### Adım 3: Paketleri Kur
+
+RStudio'da **Console** (sol alt) kısmına aşağıyı kopyalayıp yapıştırın, Enter:
+
+```r
+install.packages(c("readxl", "writexl", "janitor", "dplyr", "skimr", 
+                   "naniar", "lubridate", "stringr", "ggplot2"))
+```
+
+Birkaç dakika sürer. Bittiğinde "package successfully unpacked..." mesajları görürsünüz.
+
+::: {.callout-warning}
+## Bir kez yapılır
+Paket kurulumu **bir kez** yapılır. Sonra her R oturumunda paketleri sadece **yüklersiniz** (`library()` ile).
+:::
+
+## 4.2 İlk Adımlar — Veriyi Yüklemek
+
+RStudio'da **File → New File → R Script** ile yeni dosya açın. Aşağıdaki kodu yapıştırın ve **dosyanın yolunu kendi dosyanıza göre değiştirin**:
+
+```r
+# Paketleri yükle
+library(readxl)
+library(janitor)
+library(dplyr)
+library(skimr)
+library(naniar)
+
+# Excel dosyasını oku
+veri <- read_excel("C:/Users/Kullanici/Desktop/koah_veri.xlsx")
+
+# İlk 6 satıra bak
+head(veri)
+
+# Boyutu öğren (kaç satır, kaç sütun)
+dim(veri)
+```
+
+::: {.callout-tip}
+## Dosya yolu püf noktası
+
+Windows'ta dosya yolu yapıştırırken **`\` yerine `/`** kullanın ya da `\\` yazın:
+
+- ❌ `"C:\Users\Adim\veri.xlsx"`  
+- ✅ `"C:/Users/Adim/veri.xlsx"`
+- ✅ `"C:\\Users\\Adim\\veri.xlsx"`
+:::
+
+Çalıştırmak için: kodun olduğu satıra tıklayın, **Ctrl+Enter** (Mac: Cmd+Enter).
+
+## 4.3 Sütun Adlarını Temizle — `clean_names()`
+
+`janitor` paketinin en kullanışlı fonksiyonu:
+
+```r
+veri <- clean_names(veri)
+```
+
+Bu fonksiyon:
+
+- Türkçe karakterleri ASCII'ye çevirir (`ö` → `o`, `ç` → `c`)
+- Boşlukları `_` yapar
+- Hepsini küçük harfe çevirir
+- Özel karakterleri kaldırır
+
+### Önce / Sonra
+
+```
+Önce: "Doğum Tarihi", "Yaş (yıl)", "Tansiyon-Sistolik", "BMI(kg/m²)"
+Sonra: "dogum_tarihi", "yas_yil", "tansiyon_sistolik", "bmi_kg_m2"
+```
+
+İki saatlik manuel işi tek satırla halleder.
+
+## 4.4 Boş Satır/Sütun Temizliği
+
+```r
+# Tamamen boş satırları/sütunları kaldır
+veri <- veri %>% 
+  remove_empty(c("rows", "cols"))
+```
+
+`%>%` işareti "ardı ardına yap" anlamına gelir (pipe operatörü). 
+
+## 4.5 Hızlı Genel Bakış — `skim()`
+
+`skimr` paketinin gözde fonksiyonu:
+
+```r
+skim(veri)
+```
+
+Çıktısı şunu gösterir:
+
+- Her sütunun veri tipi
+- Eksik değer sayısı ve oranı
+- Sayısal sütunlar için ortalama, sd, min, max, çeyrekler
+- Metin sütunları için benzersiz değer sayısı
+- Mini histogram (terminalde!)
+
+Bir bakışta verinin sağlık durumunu görürsünüz.
+
+## 4.6 Duplikat Kontrolü — `get_dupes()`
+
+```r
+# hasta_id sütununda duplikat var mı?
+get_dupes(veri, hasta_id)
+
+# Birden fazla sütuna göre duplikat (kısmi duplikat)
+get_dupes(veri, ad, soyad, dogum_tarihi)
+```
+
+Eğer hiç çıktı yoksa: hiç duplikat yok ✅. Eğer satırlar listelenirse: o satırlar duplikattır.
+
+## 4.7 Tabulasyon — Kategorik Sütunları Görme
+
+```r
+# Tek sütun
+veri %>% tabyl(cinsiyet)
+
+# Çapraz tablo (iki sütun)
+veri %>% tabyl(cinsiyet, sigara_kullanimi)
+```
+
+Çıktı:
+
+```
+ cinsiyet   n  percent
+    Erkek 245    0.527
+    erkek  32    0.069
+        E  18    0.039
+    ERKEK  12    0.026
+    Kadın 198    0.426
+```
+
+Tutarsızlıkları hemen görürsünüz.
+
+## 4.8 Eksik Değer Görselleştirme — `naniar`
+
+```r
+library(naniar)
+
+# Eksik değerlerin tablosu
+miss_var_summary(veri)
+
+# Eksik değerlerin haritası (hangi satırda hangi sütun eksik)
+vis_miss(veri)
+```
+
+`vis_miss()` size siyah-beyaz bir harita çizer; verinin neresinde eksiklik olduğunu görsel olarak gösterir. Eksiklikler **rastgele mi** yoksa **örüntülü mü** anlamak için altın değerinde.
+
+## 4.9 Mini Temizlik Şablonu
+
+Aşağıdaki kod bloğu, tipik bir Excel verisinde **en yaygın 10 sorunu otomatik kontrol eder ve raporlar**. Kopyalayın, dosya yolunu değiştirin, çalıştırın:
+
+```r
+# ----- Paketler -----
+library(readxl)
+library(writexl)
+library(janitor)
+library(dplyr)
+library(skimr)
+library(naniar)
+
+# ----- 1. Veriyi oku -----
+dosya_yolu <- "C:/Users/Kullanici/Desktop/veri.xlsx"
+veri <- read_excel(dosya_yolu)
+
+cat("\n📊 BOYUT:\n")
+cat(sprintf("Satır: %d, Sütun: %d\n\n", nrow(veri), ncol(veri)))
+
+# ----- 2. Sütun adlarını temizle -----
+veri <- clean_names(veri)
+cat("✅ Sütun adları temizlendi\n")
+cat("Yeni sütun adları:\n")
+print(names(veri))
+
+# ----- 3. Boş satır/sütun -----
+veri <- remove_empty(veri, c("rows", "cols"))
+cat(sprintf("\n✅ Boş satır/sütun temizlendi. Yeni boyut: %d x %d\n", 
+            nrow(veri), ncol(veri)))
+
+# ----- 4. Genel istatistik özet -----
+cat("\n📋 GENEL ÖZET:\n")
+print(skim(veri))
+
+# ----- 5. Duplikat kontrolü -----
+cat("\n🔍 DUPLİKAT KONTROL:\n")
+duplikat_kontrol <- get_dupes(veri)
+if (nrow(duplikat_kontrol) == 0) {
+  cat("✅ Tam duplikat yok\n")
+} else {
+  cat(sprintf("⚠️  %d duplikat satır bulundu\n", nrow(duplikat_kontrol)))
+  print(duplikat_kontrol)
+}
+
+# ----- 6. Eksik değer haritası -----
+cat("\n📉 EKSİK DEĞER ÖZETİ:\n")
+print(miss_var_summary(veri))
+
+# ----- 7. Kategorik sütunlarda tutarsızlık -----
+cat("\n🏷️  KATEGORİK SÜTUNLARDA BENZERSIZ DEĞERLER:\n")
+veri %>% 
+  select(where(is.character)) %>% 
+  summarise(across(everything(), ~length(unique(.)))) %>% 
+  print()
+
+# ----- 8. Temiz veriyi kaydet -----
+cikti_yolu <- gsub("\\.xlsx$", "_TEMIZ.xlsx", dosya_yolu)
+write_xlsx(veri, cikti_yolu)
+cat(sprintf("\n✅ Temizlenmiş veri kaydedildi: %s\n", cikti_yolu))
+```
+
+Bu kodu çalıştırdığınızda:
+
+- Konsola tüm sorunların raporu yazılır
+- Temizlenmiş Excel `<dosya_adi>_TEMIZ.xlsx` olarak kaydedilir
+
+## 4.10 Tarih Düzeltme
+
+Excel'in tarih kabusunu R çözer:
+
+```r
+library(lubridate)
+
+# Farklı format tarihleri tek formata çevir
+veri$dogum_tarihi <- ymd(veri$dogum_tarihi)        # "2024-03-15" formatı
+veri$dogum_tarihi <- dmy(veri$dogum_tarihi)        # "15.03.2024" formatı  
+veri$dogum_tarihi <- mdy(veri$dogum_tarihi)        # "03/15/2024" formatı
+
+# Yaşı doğum tarihinden hesapla
+veri <- veri %>% 
+  mutate(yas = as.numeric(difftime(Sys.Date(), dogum_tarihi, units = "days") / 365.25))
+```
+
+## 4.11 Kategorileri Düzenleme
+
+```r
+library(stringr)
+library(dplyr)
+
+veri <- veri %>% 
+  mutate(
+    # Boşlukları temizle
+    cinsiyet = str_trim(cinsiyet),
+    # Kategorileri standartlaştır
+    cinsiyet = case_when(
+      cinsiyet %in% c("Erkek", "erkek", "ERKEK", "E", "e", "Erkk") ~ "Erkek",
+      cinsiyet %in% c("Kadın", "kadın", "KADIN", "K", "k") ~ "Kadın",
+      TRUE ~ NA_character_
+    )
+  )
+
+# Kontrol
+veri %>% tabyl(cinsiyet)
+```
+
+## 4.12 Eksik Değer Kodlarını Düzeltme
+
+```r
+library(naniar)
+
+# "yok", "-", "?" gibi metinleri NA yap
+veri <- veri %>% 
+  replace_with_na_all(condition = ~.x %in% c("yok", "-", "?", "NA", "veri yok", ""))
+```
+
+## 4.13 İlerideki Adım — Tam Şablon
+
+Bu bölümdeki kodlar dağınık örnekler. **Tam, render edilebilir bir Quarto şablonu** ileride bu projenin bir parçası olacak. Hazır olduğunda buradan link verilecek.
+
+::: {.callout-note}
+## Şablonu nereden bulurum?
+İlerleyen sürümde `sablon/` klasörü altında tek dosyalık `temizlik-sablonu.qmd` paylaşılacak. RStudio'da açıp **Render** butonuna basınca:
+
+- Kodun tamamı çalışır
+- Bir HTML rapor üretilir (eksikler, duplikatlar, tutarsızlıklar dahil)
+- Temiz CSV/Excel çıktısı yan klasöre kaydedilir
+:::
+
+## ✅ Bu Bölümün Özeti
+
+R ile temizlik, OpenRefine'a göre **daha programatik ama daha güçlüdür**. İlk yatırım yüksek (kurulum, öğrenme), ama:
+
+- **Tekrarlanabilir:** Aynı temizlik 10 farklı dosyaya saniyede uygulanır
+- **Belgelenmiş:** Kod, ne yaptığınızın kanıtıdır
+- **Otomatik rapor:** Veriniz hakkında her şeyi tek bakışta görürsünüz
+- **Analize doğal geçiş:** Aynı R betiğinde temizlik + analiz yapılabilir
+
+## ✅ Sıradaki Bölüm
+
+[5. Kontrol Listesi →](05-kontrol-listesi.qmd) — Tüm bunlardan sonra verinizin hazır olup olmadığını test edin.
